@@ -1,19 +1,67 @@
 version: 2
 models:
   - name: order_sales
-    description: Demo order revenue and historical merchandise cost, excluding cancelled orders.
+    description: One row per order that was not cancelled, with its revenue, merchandise cost and units sold. Cost comes from the order lines at the price paid when the order was placed.
     columns:
       - name: order_id
+        description: Unique order number.
         data_tests: [not_null, unique]
       - name: customer_id
+        description: The customer who placed the order.
         data_tests: [not_null]
+      - name: sales_date
+        description: Business date of the order in Edmonton time.
+      - name: channel
+        description: Where the order was placed, web or store.
+      - name: region
+        description: Province of the customer who placed the order.
+      - name: order_revenue
+        description: Order total as charged to the customer.
+      - name: merchandise_revenue
+        description: Sum of the order line amounts.
+      - name: merchandise_cost
+        description: What the items on the order cost the retailer.
+      - name: units_sold
+        description: Total units across the order lines.
+      - name: category_count
+        description: Number of product categories on the order.
   - name: daily_sales
-    description: Demo daily sales by Edmonton business date.
+    description: Sales for each Edmonton business date. Cancelled orders are left out.
     columns:
       - name: sales_date
+        description: Business date in Edmonton time.
         data_tests: [not_null, unique]
+      - name: order_count
+        description: Orders placed that day.
+      - name: customer_count
+        description: Distinct customers who ordered that day.
+      - name: gross_revenue
+        description: Total order revenue for the day.
+      - name: merchandise_revenue
+        description: Revenue from merchandise lines.
+      - name: merchandise_cost
+        description: Cost of the merchandise sold.
+      - name: gross_margin
+        description: Merchandise revenue minus merchandise cost.
+      - name: units_sold
+        description: Units sold that day.
   - name: customer_lifetime_value
-    description: Demo customer totals including customers with no orders.
+    description: One row per customer with their order count, revenue and margin to date. Customers who have never ordered are included with zero totals.
     columns:
       - name: customer_id
+        description: Unique customer number.
         data_tests: [not_null, unique]
+      - name: demo_name
+        description: Display name of the customer.
+      - name: region
+        description: Province where the customer is based.
+      - name: order_count
+        description: Orders placed to date.
+      - name: lifetime_revenue
+        description: Total order revenue to date.
+      - name: lifetime_margin
+        description: Merchandise margin earned to date.
+      - name: first_order_date
+        description: Date of the first order. Empty if the customer has not ordered.
+      - name: last_order_date
+        description: Date of the latest order. Empty if the customer has not ordered.

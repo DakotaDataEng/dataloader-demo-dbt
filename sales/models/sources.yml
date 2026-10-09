@@ -1,11 +1,83 @@
 version: 2
 sources:
   - name: demo_raw
-    description: Demo business tables loaded by DataLoader into the warehouse.
+    description: Business tables loaded from the source system into the warehouse by DataLoader.
     database: '{{ target.database }}'
     schema: 'demo_raw_{{ target.name }}'
     tables:
       - name: customers
+        description: Customers who shop with the retailer, one row per customer.
+        columns:
+          - name: customer_id
+            description: Unique customer number.
+          - name: demo_name
+            description: Display name of the customer.
+          - name: email
+            description: Contact email address.
+          - name: region
+            description: Province where the customer is based.
+          - name: created_at
+            description: When the row was first written in the source system.
+          - name: updated_at
+            description: When the row last changed.
       - name: products
+        description: The product catalog, one row per sellable item.
+        columns:
+          - name: product_id
+            description: Unique product number.
+          - name: sku
+            description: Stock keeping unit.
+          - name: demo_name
+            description: Product name shown to customers.
+          - name: category
+            description: Merchandising category.
+          - name: unit_price
+            description: Current list price for one unit.
+          - name: unit_cost
+            description: What one unit costs the retailer.
+          - name: is_active
+            description: True while the product is on sale.
+          - name: created_at
+            description: When the row was first written in the source system.
+          - name: updated_at
+            description: When the row last changed.
       - name: orders
+        description: Customer orders placed on the web and in stores, one row per order.
+        columns:
+          - name: order_id
+            description: Unique order number.
+          - name: customer_id
+            description: The customer who placed the order.
+          - name: ordered_at
+            description: When the customer placed the order.
+          - name: status
+            description: Where the order stands, processing, completed or cancelled.
+          - name: channel
+            description: Where the order was placed, web or store.
+          - name: total_amount
+            description: Order total, the sum of its line amounts.
+          - name: created_at
+            description: When the row was first written in the source system.
+          - name: updated_at
+            description: When the row last changed.
       - name: order_lines
+        description: The items on each order, one row per product on an order.
+        columns:
+          - name: order_line_id
+            description: Unique order line number.
+          - name: order_id
+            description: The order this line belongs to.
+          - name: product_id
+            description: The product sold on this line.
+          - name: quantity
+            description: Number of units sold.
+          - name: unit_price
+            description: Price per unit at the time of sale.
+          - name: unit_cost
+            description: Cost per unit at the time of sale.
+          - name: line_amount
+            description: Quantity times unit price.
+          - name: created_at
+            description: When the row was first written in the source system.
+          - name: updated_at
+            description: When the row last changed.

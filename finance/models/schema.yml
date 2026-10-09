@@ -1,12 +1,32 @@
 version: 2
 models:
   - name: daily_revenue
-    description: Demo booked sales and settled payments by their respective Edmonton dates. Collections include only non-cancelled orders.
+    description: Booked sales and settled payments for each Edmonton business date. Collections include only payments on orders that were not cancelled.
     columns:
       - name: revenue_date
+        description: Business date in Edmonton time.
         data_tests: [not_null, unique]
+      - name: booked_revenue
+        description: Revenue from orders placed that day.
+      - name: collected_revenue
+        description: Settled payments received that day.
+      - name: payment_count
+        description: Number of settled payments received that day.
+      - name: order_count
+        description: Orders placed that day.
   - name: daily_margin
-    description: Demo merchandise margin at historical line cost. Payment timing does not change accrued margin.
+    description: Merchandise margin for each business date, measured at the cost of the items when they were sold. When a payment arrives does not change the margin.
     columns:
       - name: margin_date
+        description: Business date in Edmonton time.
         data_tests: [not_null, unique]
+      - name: merchandise_revenue
+        description: Revenue from merchandise sold that day.
+      - name: merchandise_cost
+        description: Cost of the merchandise sold.
+      - name: gross_margin
+        description: Merchandise revenue minus merchandise cost.
+      - name: margin_rate
+        description: Gross margin as a share of merchandise revenue. Empty on days with no merchandise revenue.
+      - name: collected_revenue
+        description: Settled payments received that day.

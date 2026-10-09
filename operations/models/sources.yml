@@ -1,10 +1,87 @@
 version: 2
 sources:
   - name: demo_raw
+    description: Business tables loaded from the source system into the warehouse by DataLoader.
     database: '{{ target.database }}'
     schema: 'demo_raw_{{ target.name }}'
     tables:
       - name: inventory
+        description: Stock on hand by product and warehouse location.
+        columns:
+          - name: inventory_id
+            description: Unique inventory record number.
+          - name: product_id
+            description: The product held in stock.
+          - name: location
+            description: Warehouse where the stock sits.
+          - name: on_hand
+            description: Units currently available.
+          - name: reorder_level
+            description: Stock level at or below which the product is reordered.
+          - name: created_at
+            description: When the row was first written in the source system.
+          - name: updated_at
+            description: When the row last changed.
       - name: products
+        description: The product catalog, one row per sellable item.
+        columns:
+          - name: product_id
+            description: Unique product number.
+          - name: sku
+            description: Stock keeping unit.
+          - name: demo_name
+            description: Product name shown to customers.
+          - name: category
+            description: Merchandising category.
+          - name: unit_price
+            description: Current list price for one unit.
+          - name: unit_cost
+            description: What one unit costs the retailer.
+          - name: is_active
+            description: True while the product is on sale.
+          - name: created_at
+            description: When the row was first written in the source system.
+          - name: updated_at
+            description: When the row last changed.
       - name: shipments
+        description: Parcels sent to customers, one row per shipment.
+        columns:
+          - name: shipment_id
+            description: Unique shipment number.
+          - name: order_id
+            description: The order being shipped.
+          - name: carrier
+            description: Company delivering the parcel.
+          - name: status
+            description: Delivery status, in transit or delivered.
+          - name: shipped_at
+            description: When the parcel left the warehouse.
+          - name: expected_delivery_at
+            description: Delivery date promised to the customer.
+          - name: delivered_at
+            description: When the parcel arrived. Empty while it is in transit.
+          - name: created_at
+            description: When the row was first written in the source system.
+          - name: updated_at
+            description: When the row last changed.
       - name: web_events
+        description: Clickstream from the online store, one row per page view, product view, add to cart or checkout step.
+        columns:
+          - name: event_id
+            description: Unique event number.
+          - name: customer_id
+            description: The signed in customer. Empty for anonymous visitors.
+          - name: product_id
+            description: The product the visitor was looking at, when there is one.
+          - name: event_at
+            description: When the event happened.
+          - name: event_type
+            description: What the visitor did, such as page view or add to cart.
+          - name: session_id
+            description: Browsing session the event belongs to.
+          - name: page_path
+            description: Page the visitor was on.
+          - name: created_at
+            description: When the row was first written in the source system.
+          - name: updated_at
+            description: When the row last changed.

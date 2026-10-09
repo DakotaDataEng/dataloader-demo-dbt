@@ -1,16 +1,59 @@
 version: 2
 sources:
   - name: demo_raw
+    description: Business tables loaded from the source system into the warehouse by DataLoader.
     database: '{{ target.database }}'
     schema: 'demo_raw_{{ target.name }}'
     tables:
       - name: payments
+        description: Payments taken for orders, one row per payment.
+        columns:
+          - name: payment_id
+            description: Unique payment number.
+          - name: order_id
+            description: The order the payment belongs to.
+          - name: paid_at
+            description: When the payment was taken.
+          - name: method
+            description: How the customer paid, card or bank.
+          - name: status
+            description: Payment status, settled or refunded.
+          - name: amount
+            description: Amount paid.
+          - name: created_at
+            description: When the row was first written in the source system.
+          - name: updated_at
+            description: When the row last changed.
   - name: sales
-    description: Demo Sales project outputs, matched by destination and exact relation in DataLoader Lineage.
+    description: Reporting tables built by the Sales project, read here so finance and sales numbers agree.
     database: '{{ target.database }}'
     schema: 'demo_sales_{{ target.name }}'
     tables:
       - name: daily_sales
         identifier: daily_sales
+        description: Sales for each Edmonton business date, cancelled orders excluded.
+        columns:
+          - name: sales_date
+            description: Business date in Edmonton time.
+          - name: order_count
+            description: Orders placed that day.
+          - name: gross_revenue
+            description: Total order revenue for the day.
+          - name: merchandise_revenue
+            description: Revenue from merchandise lines.
+          - name: merchandise_cost
+            description: Cost of the merchandise sold.
+          - name: gross_margin
+            description: Merchandise revenue minus merchandise cost.
       - name: order_sales
         identifier: order_sales
+        description: One row per order that was not cancelled, with its revenue and cost.
+        columns:
+          - name: order_id
+            description: Unique order number.
+          - name: customer_id
+            description: The customer who placed the order.
+          - name: sales_date
+            description: Business date of the order in Edmonton time.
+          - name: order_revenue
+            description: Order total as charged to the customer.
