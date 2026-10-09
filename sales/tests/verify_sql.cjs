@@ -1,4 +1,4 @@
-// Run against ONLY the worker's own disposable Postgres container.
+// Run against ONLY a disposable Postgres container you own.
 // No npm packages. This checks SQL semantics, not dbt materialization.
 const { readFileSync } = require('node:fs');
 const { join, resolve } = require('node:path');

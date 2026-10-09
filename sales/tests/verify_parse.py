@@ -1,6 +1,6 @@
 """Offline verification inside an existing DataLoader image, no packages needed.
 
-Mount deploy/demo/dbt read-only at /demo; run python3
+Mount this repository read-only at /demo; run python3
 /demo/sales/tests/verify_parse.py. All generated files stay in the container.
 """
 import json
