@@ -1,21 +1,56 @@
 version: 2
 models:
   - name: stock_levels
-    description: Demo stock by product and location, including inactive products still in stock.
+    description: Stock on hand for each product at each warehouse location, with its value at cost. Products no longer on sale are included while stock remains.
     columns:
       - name: inventory_id
+        description: Unique inventory record number.
         data_tests: [not_null, unique]
+      - name: product_id
+        description: The product held in stock.
+      - name: sku
+        description: Stock keeping unit of the product.
+      - name: demo_name
+        description: Product name.
+      - name: category
+        description: Merchandising category of the product.
+      - name: location
+        description: Warehouse where the stock sits.
+      - name: on_hand
+        description: Units currently available.
+      - name: reorder_level
+        description: Stock level that triggers a reorder.
+      - name: needs_reorder
+        description: True when units on hand are below the reorder level.
+      - name: stock_value
+        description: Units on hand times unit cost.
   - name: late_shipment_rate
-    description: Demo late deliveries by expected Edmonton date and carrier, including overdue undelivered shipments.
+    description: Late deliveries for each carrier by expected delivery date in Edmonton time. A shipment is late when it arrived after its promised date, or when it is still undelivered past that date.
     columns:
       - name: expected_date
+        description: Promised delivery date in Edmonton time.
         data_tests: [not_null]
       - name: carrier
+        description: Company delivering the parcels.
         data_tests: [not_null]
+      - name: shipment_count
+        description: Shipments promised for that date.
+      - name: late_count
+        description: Shipments that were late.
+      - name: late_rate
+        description: Late shipments as a share of all shipments.
   - name: events_hourly
-    description: Demo web activity by UTC hour and event type.
+    description: Online store activity for each UTC hour and event type, with the number of events, sessions and signed in customers.
     columns:
       - name: event_hour_utc
+        description: Start of the hour in UTC.
         data_tests: [not_null]
       - name: event_type
+        description: What visitors did, such as page view or add to cart.
         data_tests: [not_null]
+      - name: event_count
+        description: Events in the hour.
+      - name: session_count
+        description: Distinct browsing sessions.
+      - name: customer_count
+        description: Distinct signed in customers.
