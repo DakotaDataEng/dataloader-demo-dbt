@@ -1,0 +1,12 @@
+name: demo_operations
+version: '1.0.0'
+config-version: 2
+profile: dataloader
+model-paths: [models]
+test-paths: [tests]
+vars:
+  demo_incidents_enabled: true
+models:
+  demo_operations:
+    +materialized: table
+    +tags: [demo, operations, hourly]

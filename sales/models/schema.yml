@@ -1,0 +1,19 @@
+version: 2
+models:
+  - name: order_sales
+    description: Demo order revenue and historical merchandise cost, excluding cancelled orders.
+    columns:
+      - name: order_id
+        data_tests: [not_null, unique]
+      - name: customer_id
+        data_tests: [not_null]
+  - name: daily_sales
+    description: Demo daily sales by Edmonton business date.
+    columns:
+      - name: sales_date
+        data_tests: [not_null, unique]
+  - name: customer_lifetime_value
+    description: Demo customer totals including customers with no orders.
+    columns:
+      - name: customer_id
+        data_tests: [not_null, unique]

@@ -1,0 +1,16 @@
+version: 2
+sources:
+  - name: demo_raw
+    database: '{{ target.database }}'
+    schema: 'demo_raw_{{ target.name }}'
+    tables:
+      - name: payments
+  - name: sales
+    description: Demo Sales project outputs, matched by destination and exact relation in DataLoader Lineage.
+    database: '{{ target.database }}'
+    schema: 'demo_sales_{{ target.name }}'
+    tables:
+      - name: daily_sales
+        identifier: daily_sales
+      - name: order_sales
+        identifier: order_sales

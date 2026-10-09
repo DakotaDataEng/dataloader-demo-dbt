@@ -1,0 +1,21 @@
+version: 2
+models:
+  - name: stock_levels
+    description: Demo stock by product and location, including inactive products still in stock.
+    columns:
+      - name: inventory_id
+        data_tests: [not_null, unique]
+  - name: late_shipment_rate
+    description: Demo late deliveries by expected Edmonton date and carrier, including overdue undelivered shipments.
+    columns:
+      - name: expected_date
+        data_tests: [not_null]
+      - name: carrier
+        data_tests: [not_null]
+  - name: events_hourly
+    description: Demo web activity by UTC hour and event type.
+    columns:
+      - name: event_hour_utc
+        data_tests: [not_null]
+      - name: event_type
+        data_tests: [not_null]

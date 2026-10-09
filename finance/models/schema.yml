@@ -1,0 +1,12 @@
+version: 2
+models:
+  - name: daily_revenue
+    description: Demo booked sales and settled payments by their respective Edmonton dates. Collections include only non-cancelled orders.
+    columns:
+      - name: revenue_date
+        data_tests: [not_null, unique]
+  - name: daily_margin
+    description: Demo merchandise margin at historical line cost. Payment timing does not change accrued margin.
+    columns:
+      - name: margin_date
+        data_tests: [not_null, unique]

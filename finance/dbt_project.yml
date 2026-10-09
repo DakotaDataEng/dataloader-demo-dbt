@@ -1,0 +1,10 @@
+name: demo_finance
+version: '1.0.0'
+config-version: 2
+profile: dataloader
+model-paths: [models]
+test-paths: [tests]
+models:
+  demo_finance:
+    +materialized: table
+    +tags: [demo, finance, nightly, weekly_full_refresh]

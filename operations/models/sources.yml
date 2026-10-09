@@ -1,0 +1,10 @@
+version: 2
+sources:
+  - name: demo_raw
+    database: '{{ target.database }}'
+    schema: 'demo_raw_{{ target.name }}'
+    tables:
+      - name: inventory
+      - name: products
+      - name: shipments
+      - name: web_events

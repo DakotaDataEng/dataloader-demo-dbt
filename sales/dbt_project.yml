@@ -1,0 +1,10 @@
+name: demo_sales
+version: '1.0.0'
+config-version: 2
+profile: dataloader
+model-paths: [models]
+test-paths: [tests]
+models:
+  demo_sales:
+    +materialized: table
+    +tags: [demo, sales]

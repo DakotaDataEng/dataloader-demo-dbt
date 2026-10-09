@@ -1,0 +1,11 @@
+version: 2
+sources:
+  - name: demo_raw
+    description: Demo business tables loaded by DataLoader into the warehouse.
+    database: '{{ target.database }}'
+    schema: 'demo_raw_{{ target.name }}'
+    tables:
+      - name: customers
+      - name: products
+      - name: orders
+      - name: order_lines
