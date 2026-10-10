@@ -54,3 +54,91 @@ models:
         description: Distinct browsing sessions.
       - name: customer_count
         description: Distinct signed in customers.
+  - name: sandbox_daily_orders
+    description: Daily order count and amount by order status and currency.
+    columns:
+      - name: order_day_status_currency_key
+        description: Composite key for the order date, status and currency grouping.
+        data_tests:
+          - not_null:
+              config:
+                enabled: "{{ target.name == 'prod' }}"
+          - unique:
+              config:
+                enabled: "{{ target.name == 'prod' }}"
+      - name: order_date
+        description: Calendar date the orders were placed.
+      - name: status
+        description: Current order status.
+      - name: currency
+        description: Currency code for the order amounts.
+      - name: order_count
+        description: Number of orders in the grouping.
+      - name: order_amount
+        description: Sum of order amounts in the grouping's currency.
+  - name: sandbox_customer_order_totals
+    description: Number and amount of orders by customer segment, country and currency, including customers with no orders.
+    columns:
+      - name: segment_country_currency_key
+        description: Composite key for the segment, country and currency grouping.
+        data_tests:
+          - not_null:
+              config:
+                enabled: "{{ target.name == 'prod' }}"
+          - unique:
+              config:
+                enabled: "{{ target.name == 'prod' }}"
+      - name: segment
+        description: Customer segment.
+      - name: country
+        description: Customer country code.
+      - name: currency
+        description: Currency code for the order amounts; null for customers without orders.
+      - name: order_count
+        description: Distinct orders in the grouping.
+      - name: order_amount
+        description: Sum of order amounts in the grouping's currency, or zero when there are no orders.
+  - name: sandbox_order_events_daily
+    description: Count of order events by calendar date and event type.
+    columns:
+      - name: event_day_type_key
+        description: Composite key for the event date and type grouping.
+        data_tests:
+          - not_null:
+              config:
+                enabled: "{{ target.name == 'prod' }}"
+          - unique:
+              config:
+                enabled: "{{ target.name == 'prod' }}"
+      - name: event_date
+        description: Calendar date the events occurred.
+      - name: event_type
+        description: Type of order event.
+      - name: event_count
+        description: Number of events in the grouping.
+  - name: sandbox_sensor_readings_daily
+    description: Sensor reading counts and value ranges by device, calendar date and source quality code.
+    columns:
+      - name: device_day_quality_key
+        description: Composite key for the reading date, device and quality code grouping.
+        data_tests:
+          - not_null:
+              config:
+                enabled: "{{ target.name == 'prod' }}"
+          - unique:
+              config:
+                enabled: "{{ target.name == 'prod' }}"
+      - name: reading_date
+        description: Calendar date the readings were recorded.
+      - name: device_id
+        description: Device that produced the readings.
+      - name: quality
+        description: Quality code assigned by the source system.
+      - name: reading_count
+        description: Number of readings in the grouping.
+      - name: minimum_value
+        description: Minimum measured value in the grouping.
+      - name: maximum_value
+        description: Maximum measured value in the grouping.
+      - name: average_value
+        description: Average measured value in the grouping.
