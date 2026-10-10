@@ -85,3 +85,96 @@ sources:
             description: When the row was first written in the source system.
           - name: updated_at
             description: When the row last changed.
+  - name: sandbox_raw
+    description: Synthetic sandbox tables loaded by DataLoader into the Demo warehouse.
+    database: '{{ target.database }}'
+    schema: 'sandbox_raw_{{ target.name }}'
+    tables:
+      - name: audit_log
+        description: Audit actions recorded by the synthetic sandbox system.
+        columns:
+          - name: logged_at
+            description: When the audit action was logged.
+          - name: actor
+            description: User or process that performed the action.
+          - name: action
+            description: Action recorded in the audit log.
+          - name: detail
+            description: Additional detail about the action.
+      - name: order_events
+        description: Events recorded against orders in the synthetic sandbox.
+        columns:
+          - name: event_id
+            description: Unique order event identifier.
+          - name: order_id
+            description: Order associated with the event.
+          - name: event_type
+            description: Type of event recorded for the order.
+          - name: event_at
+            description: When the event occurred.
+          - name: note
+            description: Optional note accompanying the event.
+          - name: rv
+            description: SQL Server row version value for the event row.
+      - name: products
+        description: Product catalog for the synthetic sandbox orders.
+        columns:
+          - name: product_code
+            description: Product's unique business code.
+          - name: product_name
+            description: Display name of the product.
+          - name: category
+            description: Product category.
+          - name: list_price
+            description: Listed price of the product.
+          - name: is_active
+            description: Whether the product is currently active.
+          - name: updated_at
+            description: When the product was last updated, including its time zone offset.
+      - name: sensor_readings
+        description: Synthetic readings collected from sandbox devices.
+        columns:
+          - name: reading_id
+            description: Unique sensor reading identifier.
+          - name: device_id
+            description: Device that produced the reading.
+          - name: reading_at
+            description: When the reading was recorded.
+          - name: value
+            description: Measured sensor value.
+          - name: quality
+            description: Quality code assigned to the reading by the source system.
+      - name: orders
+        description: Synthetic customer orders and their current status.
+        columns:
+          - name: order_id
+            description: Unique order identifier.
+          - name: customer_id
+            description: Customer who placed the order.
+          - name: order_date
+            description: Calendar date the order was placed.
+          - name: status
+            description: Current order status.
+          - name: amount
+            description: Order amount in the specified currency.
+          - name: currency
+            description: Currency code for the order amount.
+          - name: modified_at
+            description: When the order was last modified.
+      - name: customers
+        description: Synthetic customers associated with sandbox orders.
+        columns:
+          - name: customer_id
+            description: Unique customer identifier.
+          - name: customer_name
+            description: Customer's display name.
+          - name: email
+            description: Customer's email address.
+          - name: country
+            description: Customer's country code.
+          - name: segment
+            description: Customer segment.
+          - name: created_at
+            description: When the customer record was created.
+          - name: modified_at
+            description: When the customer record was last modified.

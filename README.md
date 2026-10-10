@@ -5,7 +5,7 @@ Three small dbt projects that run in DataLoader's demo environment. They model a
 | Project | Folder | Reads | Builds | Runs |
 |---|---|---|---|---|
 | Sales | `sales/` | customers, products, orders, order lines | daily sales, order sales, customer lifetime value | when its loads finish (asset automation) |
-| Operations | `operations/` | inventory, shipments, web events | stock levels, late shipment rate, events per hour | hourly |
+| Operations | `operations/` | inventory, shipments, web events, sandbox orders, customers, order events and sensor readings | stock levels, late shipment rate, events per hour, sandbox daily orders, sandbox customer order totals, sandbox daily order events and sandbox sensor readings by device, day and quality | hourly |
 | Finance | `finance/` | payments, plus the Sales models | daily revenue, daily margin | nightly, with a weekly full rebuild |
 
 Finance reads Sales' models as sources, so Lineage shows an edge from one project to another. Operations has a test that warns now and then on purpose.
