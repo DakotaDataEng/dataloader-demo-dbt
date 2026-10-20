@@ -1,0 +1,10 @@
+name: demo_oilgas
+version: '1.0.0'
+config-version: 2
+profile: dataloader
+model-paths: [models]
+
+models:
+  demo_oilgas:
+    +materialized: table
+    +tags: [demo, oilgas, nightly]

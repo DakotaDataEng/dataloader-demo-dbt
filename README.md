@@ -1,12 +1,13 @@
 # DataLoader demo dbt projects
 
-Three small dbt projects that run in DataLoader's demo environment. They model a made-up retail business; every row they read is generated fake data.
+Four small dbt projects that run in DataLoader's demo environment. Three model a made-up retail business and one a made-up oil and gas operator; every row they read is generated fake data.
 
 | Project | Folder | Reads | Builds | Runs |
 |---|---|---|---|---|
 | Sales | `sales/` | customers, products, orders, order lines | daily sales, order sales, customer lifetime value | when its loads finish (asset automation) |
 | Operations | `operations/` | inventory, shipments, web events, sandbox orders, customers, order events and sensor readings | stock levels, late shipment rate, events per hour, sandbox daily orders, sandbox customer order totals, sandbox daily order events and sandbox sensor readings by device, day and quality | hourly |
 | Finance | `finance/` | payments, plus the Sales models | daily revenue, daily margin | nightly, with a weekly full rebuild |
+| Oil and gas | `oilgas/` | wells, daily allocations | staged allocations, production per well per day | nightly |
 
 Finance reads Sales' models as sources, so Lineage shows an edge from one project to another. Operations has a test that warns now and then on purpose.
 
@@ -15,9 +16,10 @@ Finance reads Sales' models as sources, so Lineage shows an edge from one projec
 Each project uses the profile `dataloader` with two targets named `test` and `prod`, one thread each. DataLoader writes the profile at run time.
 
 - Raw tables: `demo_raw_test` and `demo_raw_prod`, loaded by DataLoader with their source names (`customers`, `products`, `orders`, `order_lines`, `inventory`, `shipments`, `payments`, `web_events`).
-- Models: `demo_sales_<target>`, `demo_operations_<target>` and `demo_finance_<target>`.
+- Oil and gas raw tables: `demo_og_raw_test` and `demo_og_raw_prod`. They keep the source's PascalCase column names, so the models quote them.
+- Models: `demo_sales_<target>`, `demo_operations_<target>`, `demo_finance_<target>` and `demo_oilgas_<target>`.
 
-All three share one Postgres database. Sync Sales before Finance so Finance's sources resolve to Sales' models.
+All four share one Postgres database. Sync Sales before Finance so Finance's sources resolve to Sales' models.
 
 ## Runtime
 
