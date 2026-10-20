@@ -1,0 +1,16 @@
+name: demo_lakehouse
+version: '1.0.0'
+config-version: 2
+profile: dataloader
+model-paths: [models]
+macro-paths: [macros]
+test-paths: [tests]
+models:
+  demo_lakehouse:
+    +database: lake
+    +materialized: table
+    +tags: [demo, lakehouse]
+    silver:
+      +schema: silver
+    gold:
+      +schema: gold

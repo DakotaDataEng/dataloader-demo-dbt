@@ -1,0 +1,140 @@
+version: 2
+sources:
+  - name: bronze
+    description: Business tables DataLoader loads daily from the Demo source into the lake, incrementally on updated_at.
+    database: lake
+    schema: bronze
+    tables:
+      - name: customers
+        columns:
+          - name: customer_id
+          - name: demo_name
+            description: "Display name of the customer."
+          - name: email
+            description: "Contact email address."
+          - name: region
+            description: "Province where the customer is based."
+          - name: created_at
+            description: "When the row was first written in the source system."
+          - name: updated_at
+            description: "When the row last changed."
+          - name: _dl_loaded_at
+            description: "When DataLoader last wrote the row to the lake."
+      - name: products
+        columns:
+          - name: product_id
+          - name: sku
+            description: "Stock keeping unit."
+          - name: demo_name
+            description: "Product name shown to customers."
+          - name: category
+            description: "Merchandising category."
+          - name: unit_price
+            description: "Current list price for one unit."
+          - name: unit_cost
+            description: "What one unit costs the retailer."
+          - name: is_active
+            description: "True while the product is on sale."
+          - name: created_at
+            description: "When the row was first written in the source system."
+          - name: updated_at
+            description: "When the row last changed."
+          - name: _dl_loaded_at
+            description: "When DataLoader last wrote the row to the lake."
+      - name: orders
+        columns:
+          - name: order_id
+          - name: customer_id
+            description: "The customer who placed the order."
+          - name: ordered_at
+            description: "When the customer placed the order."
+          - name: status
+            description: "Where the order stands, processing, completed or cancelled."
+          - name: channel
+            description: "Where the order was placed, web or store."
+          - name: total_amount
+            description: "Order total, the sum of its line amounts."
+          - name: created_at
+            description: "When the row was first written in the source system."
+          - name: updated_at
+            description: "When the row last changed."
+          - name: _dl_loaded_at
+            description: "When DataLoader last wrote the row to the lake."
+      - name: order_lines
+        columns:
+          - name: order_line_id
+          - name: order_id
+            description: "The order this line belongs to."
+          - name: product_id
+            description: "The product sold on this line."
+          - name: quantity
+            description: "Number of units sold."
+          - name: unit_price
+            description: "Price per unit at the time of sale."
+          - name: unit_cost
+            description: "Cost per unit at the time of sale."
+          - name: line_amount
+            description: "Quantity times unit price."
+          - name: created_at
+            description: "When the row was first written in the source system."
+          - name: updated_at
+            description: "When the row last changed."
+          - name: _dl_loaded_at
+            description: "When DataLoader last wrote the row to the lake."
+      - name: payments
+        columns:
+          - name: payment_id
+          - name: order_id
+            description: "The order that was paid."
+          - name: paid_at
+            description: "When the payment was taken."
+          - name: method
+            description: "How the customer paid."
+          - name: status
+            description: "Settled or refunded."
+          - name: amount
+            description: "Amount paid."
+          - name: created_at
+            description: "When the row was first written in the source system."
+          - name: updated_at
+            description: "When the row last changed."
+          - name: _dl_loaded_at
+            description: "When DataLoader last wrote the row to the lake."
+      - name: shipments
+        columns:
+          - name: shipment_id
+          - name: order_id
+            description: "The order that was shipped."
+          - name: carrier
+            description: "Carrier that moved the parcel."
+          - name: status
+            description: "In transit or delivered."
+          - name: shipped_at
+            description: "When the parcel left the warehouse."
+          - name: expected_delivery_at
+            description: "Promised delivery time."
+          - name: delivered_at
+            description: "When it arrived. Empty until delivered."
+          - name: created_at
+            description: "When the row was first written in the source system."
+          - name: updated_at
+            description: "When the row last changed."
+          - name: _dl_loaded_at
+            description: "When DataLoader last wrote the row to the lake."
+      - name: inventory
+        columns:
+          - name: inventory_id
+          - name: product_id
+            description: "The product held."
+          - name: location
+            description: "Where the stock is held."
+          - name: on_hand
+            description: "Units in stock."
+          - name: reorder_level
+            description: "Stock level that triggers a reorder."
+          - name: created_at
+            description: "When the row was first written in the source system."
+          - name: updated_at
+            description: "When the row last changed."
+          - name: _dl_loaded_at
+            description: "When DataLoader last wrote the row to the lake."
