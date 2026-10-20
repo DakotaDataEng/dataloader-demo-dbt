@@ -1,0 +1,23 @@
+version: 2
+models:
+  - name: daily_revenue_by_category
+    description: Revenue, cost and margin for each Edmonton business date and product category. Cancelled orders are left out.
+    columns:
+      - name: sales_date
+        data_tests: [not_null]
+      - name: category
+        data_tests: [not_null]
+  - name: customer_lifetime_value
+    description: One row per customer with order count, revenue and margin to date. Customers who have never ordered have zero totals.
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+      - name: customer_name
+        description: Display name of the customer.
+      - name: lifetime_revenue
+        description: Total order revenue to date, cancelled orders excluded.
+  - name: fulfilment_time
+    description: Hours from order to shipment and to delivery for each Edmonton order date, with the count of late deliveries.
+    columns:
+      - name: order_date
+        data_tests: [unique, not_null]

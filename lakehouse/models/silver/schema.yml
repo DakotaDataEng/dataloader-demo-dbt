@@ -1,0 +1,99 @@
+version: 2
+models:
+  - name: silver_customers
+    description: One row per customer, the latest version loaded.
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+  - name: silver_products
+    description: One row per product, the latest version loaded.
+    columns:
+      - name: product_id
+        data_tests: [unique, not_null]
+  - name: silver_orders
+    description: One row per order, the latest version loaded.
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+      - name: customer_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('silver_customers')
+                field: customer_id
+      - name: status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [processing, completed, cancelled]
+      - name: channel
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [web, store]
+  - name: silver_order_lines
+    description: One row per order line, the latest version loaded.
+    columns:
+      - name: order_line_id
+        data_tests: [unique, not_null]
+      - name: order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('silver_orders')
+                field: order_id
+      - name: product_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('silver_products')
+                field: product_id
+  - name: silver_payments
+    description: One row per payment, the latest version loaded.
+    columns:
+      - name: payment_id
+        data_tests: [unique, not_null]
+      - name: order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('silver_orders')
+                field: order_id
+      - name: status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [settled, refunded]
+  - name: silver_shipments
+    description: One row per shipment, the latest version loaded.
+    columns:
+      - name: shipment_id
+        data_tests: [unique, not_null]
+      - name: order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('silver_orders')
+                field: order_id
+      - name: status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [in_transit, delivered]
+  - name: silver_inventory
+    description: One row per product and location, the latest version loaded.
+    columns:
+      - name: inventory_id
+        data_tests: [unique, not_null]
+      - name: product_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('silver_products')
+                field: product_id
