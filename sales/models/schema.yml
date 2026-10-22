@@ -45,6 +45,8 @@ models:
         description: Merchandise revenue minus merchandise cost.
       - name: units_sold
         description: Units sold that day.
+      - name: average_order_value
+        description: Gross revenue divided by the orders placed that day.
   - name: customer_lifetime_value
     description: One row per customer with their order count, revenue and margin to date. Customers who have never ordered are included with zero totals.
     columns:
@@ -66,7 +68,7 @@ models:
       - name: last_order_date
         description: Date of the latest order. Empty if the customer has not ordered.
   - name: recent_orders
-    description: Orders from the 30 days up to the newest order, one row per order. It builds incrementally, so each run adds new orders and updates the ones that changed since the last run. Cancelled orders are kept, with their status.
+    description: Orders from the 14 days up to the newest order, one row per order. It builds incrementally, so each run adds new orders and updates the ones that changed since the last run. Cancelled orders are kept, with their status.
     columns:
       - name: order_id
         description: Unique order number.
