@@ -1,0 +1,8 @@
+name: demo_approvals
+version: '1.0.0'
+config-version: 2
+profile: dataloader
+model-paths: [models]
+models:
+  demo_approvals:
+    +tags: [demo, approvals]

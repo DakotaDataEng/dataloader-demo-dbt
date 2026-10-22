@@ -1,0 +1,16 @@
+version: 2
+models:
+  - name: orders_by_day
+    description: Orders and revenue for each Edmonton business day and channel.
+    columns:
+      - name: day_channel
+        description: The business day and channel together, the row key.
+        tests: [unique, not_null]
+      - name: order_date
+        description: Business date in Edmonton time.
+      - name: channel
+        description: Where the order was placed, web or store.
+      - name: order_count
+        description: Orders placed that day on that channel.
+      - name: order_revenue
+        description: Order totals for the day, cancelled orders included.

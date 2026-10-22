@@ -1,0 +1,20 @@
+version: 2
+sources:
+  - name: demo_raw
+    description: Business tables loaded from the source system into the warehouse by DataLoader.
+    database: '{{ target.database }}'
+    schema: 'demo_raw_{{ target.name }}'
+    tables:
+      - name: orders
+        description: Customer orders placed on the web and in stores, one row per order.
+        columns:
+          - name: order_id
+            description: Unique order number.
+          - name: ordered_at
+            description: When the customer placed the order.
+          - name: status
+            description: Where the order stands, processing, completed or cancelled.
+          - name: channel
+            description: Where the order was placed, web or store.
+          - name: total_amount
+            description: Order total, the sum of its line amounts.
