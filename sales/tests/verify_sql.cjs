@@ -20,6 +20,7 @@ function check(statement, expected) {
 function render(project, path, environment, at = '', enabled = true) {
   return readFileSync(join(root, project, path), 'utf8')
     .replace(/\{\{\s*config\([\s\S]*?\)\s*\}\}/g, '')
+    .replace(/\{%\s*if is_incremental\(\)\s*%\}[\s\S]*?\{%\s*endif\s*%\}/g, '')
     .replace(/\{\{\s*source\('([^']+)',\s*'([^']+)'\)\s*\}\}/g,
       (_, source, table) => `${source === 'sales' ? 'demo_sales' : 'demo_raw'}_${environment}.${table}`)
     .replace(/\{\{\s*ref\('([^']+)'\)\s*\}\}/g, (_, table) => `demo_${project}_${environment}.${table}`)
@@ -36,9 +37,9 @@ for (const environment of ['test', 'prod']) {
     insert into ${raw}.customers values (1,'Demo customer 1','West'),(2,'Demo customer 2','East');
     create table ${raw}.products(product_id bigint primary key, sku text, demo_name text, category text, unit_cost numeric(12,2));
     insert into ${raw}.products values (1,'DEMO-1','Demo product 1','Demo goods',99);
-    create table ${raw}.orders(order_id bigint primary key,customer_id bigint,ordered_at timestamptz,status text,channel text,total_amount numeric(12,2));
-    insert into ${raw}.orders values (1,1,'2026-10-08T02:00:00Z','completed','web',20),
-      (2,1,'2026-10-08T02:00:00Z','cancelled','web',100);
+    create table ${raw}.orders(order_id bigint primary key,customer_id bigint,ordered_at timestamptz,status text,channel text,total_amount numeric(12,2),updated_at timestamptz);
+    insert into ${raw}.orders values (1,1,'2026-10-08T02:00:00Z','completed','web',20,'2026-10-08T03:00:00Z'),
+      (2,1,'2026-10-08T02:00:00Z','cancelled','web',100,'2026-10-08T03:00:00Z');
     create table ${raw}.order_lines(order_id bigint,product_id bigint,quantity integer,unit_cost numeric(12,2),line_amount numeric(12,2));
     insert into ${raw}.order_lines values (1,1,2,3,20),(2,1,1,3,100);
     create table ${raw}.inventory(inventory_id bigint primary key,product_id bigint,location text,on_hand integer,reorder_level integer);
@@ -53,7 +54,7 @@ for (const environment of ['test', 'prod']) {
     insert into ${raw}.payments values (1,'2026-10-09T02:00:00Z',20,'settled'),
       (2,'2026-10-09T02:00:00Z',100,'refunded'),(1,'2026-10-09T02:00:00Z',15,'pending');`);
   const models = {
-    sales: ['order_sales', 'daily_sales', 'customer_lifetime_value'],
+    sales: ['order_sales', 'daily_sales', 'customer_lifetime_value', 'recent_orders'],
     operations: ['stock_levels', 'late_shipment_rate', 'events_hourly'],
     finance: ['daily_revenue', 'daily_margin'],
   };
@@ -65,6 +66,7 @@ for (const environment of ['test', 'prod']) {
   check(`select count(*) from ${sales}.order_sales;`, '1');
   check(`select sales_date || '|' || gross_revenue || '|' || merchandise_cost || '|' || gross_margin from ${sales}.daily_sales;`, '2026-10-07|20.00|6.00|14.00');
   check(`select lifetime_revenue from ${sales}.customer_lifetime_value where customer_id=2;`, '0');
+  check(`select count(*) from ${sales}.recent_orders;`, '2');
   check(`select needs_reorder from ${operations}.stock_levels;`, 't');
   check(`select shipment_count || '|' || late_count from ${operations}.late_shipment_rate;`, '3|2');
   check(`select count(*) from ${operations}.events_hourly;`, '2');
@@ -87,6 +89,6 @@ for (const environment of ['test', 'prod']) {
   sql(`truncate ${operations}.late_shipment_rate;`);
   check(warning('2026-10-07T20:07:00Z'), '1');
   check(warning('2026-10-07T20:07:00Z', false), '0');
-  console.log(`PASS ${environment}: 8 model SQL statements and 20 result checks`);
+  console.log(`PASS ${environment}: 9 model SQL statements and 21 result checks`);
 }
 console.log(`PASS ${checks} SQL result checks total`);

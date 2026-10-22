@@ -65,3 +65,21 @@ models:
         description: Date of the first order. Empty if the customer has not ordered.
       - name: last_order_date
         description: Date of the latest order. Empty if the customer has not ordered.
+  - name: recent_orders
+    description: Orders from the 30 days up to the newest order, one row per order. It builds incrementally, so each run adds new orders and updates the ones that changed since the last run. Cancelled orders are kept, with their status.
+    columns:
+      - name: order_id
+        description: Unique order number.
+        data_tests: [not_null, unique]
+      - name: customer_id
+        description: The customer who placed the order.
+      - name: ordered_at
+        description: When the customer placed the order.
+      - name: status
+        description: Where the order stands, processing, completed or cancelled.
+      - name: channel
+        description: Where the order was placed, web or store.
+      - name: total_amount
+        description: Order total as charged to the customer.
+      - name: updated_at
+        description: When the order row last changed in the source system.
