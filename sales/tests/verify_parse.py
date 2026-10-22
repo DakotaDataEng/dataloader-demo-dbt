@@ -19,7 +19,7 @@ def main():
     dbt_environment = dict(os.environ)
     dbt_environment.pop('DBT_ALLOW_EXPERIMENTAL_ADAPTERS', None)
     expected = {
-        'sales': ({'order_sales', 'daily_sales', 'customer_lifetime_value'}, 8),
+        'sales': ({'order_sales', 'daily_sales', 'customer_lifetime_value', 'recent_orders'}, 10),
         'operations': ({'stock_levels', 'late_shipment_rate', 'events_hourly'}, 8),
         'finance': ({'daily_revenue', 'daily_margin'}, 5),
     }
@@ -57,7 +57,7 @@ def main():
                     if node['resource_type'] == 'model':
                         assert node['schema'] == 'demo_' + project + '_' + environment
                         assert node['database'] == 'demo_warehouse'
-                        assert node['config']['materialized'] == 'table'
+                        assert node['config']['materialized'] == ('incremental' if node['name'] == 'recent_orders' else 'table')
                 for source in manifest['sources'].values():
                     assert source['database'] == 'demo_warehouse'
                     schema = 'demo_sales_' if source['source_name'] == 'sales' else 'demo_raw_'
@@ -98,7 +98,7 @@ def main():
                            if n['name'] == 'demo_weekly_warning')
             assert warning['config']['severity'].lower() == 'warn', warning['config']
             assert warning['depends_on']['nodes'] == ['model.demo_operations.late_shipment_rate']
-        print('PASS 6 manifest-v12 parses; 16 model instances; 42 test instances; both Lineage contracts; WARN severity')
+        print('PASS 6 manifest-v12 parses; 18 model instances; 46 test instances; both Lineage contracts; WARN severity')
 
 
 if __name__ == '__main__':

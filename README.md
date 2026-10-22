@@ -4,7 +4,7 @@ Five small dbt projects that run in DataLoader's demo environment. Four model a 
 
 | Project | Folder | Reads | Builds | Runs |
 |---|---|---|---|---|
-| Sales | `sales/` | customers, products, orders, order lines | daily sales, order sales, customer lifetime value | when its loads finish (asset automation) |
+| Sales | `sales/` | customers, products, orders, order lines | daily sales, order sales, customer lifetime value, recent orders (an incremental model) | when its loads finish (asset automation) |
 | Operations | `operations/` | inventory, shipments, web events, sandbox orders, customers, order events and sensor readings | stock levels, late shipment rate, events per hour, sandbox daily orders, sandbox customer order totals, sandbox daily order events and sandbox sensor readings by device, day and quality | hourly |
 | Finance | `finance/` | payments, plus the Sales models | daily revenue, daily margin | nightly, with a weekly full rebuild |
 | Oil and gas | `oilgas/` | wells, daily allocations | staged allocations, production per well per day | nightly |
