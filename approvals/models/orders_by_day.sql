@@ -6,6 +6,7 @@ select
     cast(ordered_at at time zone 'America/Edmonton' as date) as order_date,
     channel,
     count(*) as order_count,
+    count(*) filter (where status = 'completed') as completed_count,
     sum(total_amount) as order_revenue
 from {{ source('demo_raw', 'orders') }}
 {% if is_incremental() %}

@@ -12,5 +12,7 @@ models:
         description: Where the order was placed, web or store.
       - name: order_count
         description: Orders placed that day on that channel.
+      - name: completed_count
+        description: Orders that reached completed that day on that channel.
       - name: order_revenue
         description: Order totals for the day, cancelled orders included.
