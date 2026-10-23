@@ -1,0 +1,16 @@
+name: demo_oilgas_capital
+version: '1.0.0'
+config-version: 2
+profile: dataloader
+model-paths: [models]
+test-paths: [tests]
+
+models:
+  demo_oilgas_capital:
+    +tags: [demo, oilgas, capital, nightly]
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table

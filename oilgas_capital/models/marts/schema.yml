@@ -1,0 +1,96 @@
+version: 2
+
+models:
+  - name: fct_afe_variance
+    description: AFE variance by AFE and cost code, which is actual less estimate. Positive means over the estimate and negative means under. While an AFE is open, a negative variance includes spend not made yet. Reads the accounting tables and the land project for lease names. Synthetic Demo data.
+    columns:
+      - name: afe_line_id
+        description: Unique AFE line number.
+        tests: [unique, not_null]
+      - name: afe_id
+        description: The AFE.
+        tests: [not_null]
+      - name: afe_number
+        description: The AFE number people quote.
+      - name: well_id
+        description: The well the AFE spends on.
+      - name: lease_id
+        description: The lease the well sits on.
+      - name: lease_name
+        description: Demo lease name, from the land project.
+      - name: afe_type
+        description: Infill drill and complete, Recompletion, Facilities upgrade or Artificial lift conversion.
+      - name: afe_status
+        description: Open or Closed.
+      - name: cost_code
+        description: The capital cost code.
+      - name: cost_code_description
+        description: What the cost code covers.
+      - name: estimated_amount
+        description: The approved estimate, in US dollars.
+      - name: actual_amount
+        description: Capital invoices charged so far, in US dollars.
+      - name: variance_amount
+        description: Actual less estimate, in US dollars.
+      - name: variance_rate
+        description: Variance as a share of the estimate.
+      - name: variance_direction
+        description: Over, Under or On estimate.
+        tests:
+          - accepted_values:
+              arguments:
+                values: [Over, Under, On estimate]
+      - name: invoiced_amount
+        description: Sum of the capital invoices charged to the line. It should equal the actual.
+      - name: invoice_count
+        description: Invoices charged to the line.
+  - name: fct_afe_summary
+    description: One row per AFE with the estimate, actual and variance added up over its lines. Shows which projects ran over. Synthetic Demo data.
+    columns:
+      - name: afe_id
+        description: Unique AFE row number.
+        tests: [unique, not_null]
+      - name: afe_number
+        description: The AFE number people quote.
+      - name: well_id
+        description: The well the AFE spends on.
+      - name: lease_id
+        description: The lease the well sits on.
+      - name: lease_name
+        description: Demo lease name, from the land project.
+      - name: afe_type
+        description: The AFE project type.
+      - name: afe_status
+        description: Open or Closed.
+      - name: line_count
+        description: Cost code lines on the AFE.
+      - name: estimated_amount
+        description: Total approved estimate, in US dollars.
+      - name: actual_amount
+        description: Total actual so far, in US dollars.
+      - name: variance_amount
+        description: Actual less estimate, in US dollars.
+      - name: variance_rate
+        description: Variance as a share of the estimate.
+      - name: invoice_count
+        description: Capital invoices charged to the AFE.
+  - name: fct_capital_spend_monthly
+    description: Capital invoiced per month and capital cost code, with the AFEs and wells it was spent on. Synthetic Demo data.
+    columns:
+      - name: spend_key
+        description: Unique key made from the month and cost code.
+        tests: [unique, not_null]
+      - name: spend_month
+        description: First day of the invoice month.
+      - name: cost_code
+        description: The capital cost code.
+      - name: cost_code_description
+        description: What the cost code covers.
+      - name: invoice_count
+        description: Capital invoices in the month.
+      - name: afe_count
+        description: AFEs charged in the month.
+      - name: well_count
+        description: Wells charged in the month.
+      - name: amount
+        description: Capital invoiced, in US dollars.

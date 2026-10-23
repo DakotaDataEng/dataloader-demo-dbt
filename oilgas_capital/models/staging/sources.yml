@@ -1,0 +1,92 @@
+version: 2
+
+sources:
+  - name: og_raw
+    description: Demo oil and gas raw tables loaded by DataLoader. They keep the source's column names. Synthetic Demo data only.
+    schema: "demo_og_raw_{{ target.name }}"
+    tables:
+      - name: afe
+        description: Authorizations for expenditure from the accounting system. One row per AFE.
+        columns:
+          - name: AfeId
+            description: Unique AFE row number.
+          - name: AfeNumber
+            description: The AFE number people quote.
+          - name: WellId
+            description: The well the AFE spends on.
+          - name: LeaseId
+            description: The lease the well sits on.
+          - name: AfeType
+            description: Infill drill and complete, Recompletion, Facilities upgrade or Artificial lift conversion.
+          - name: Description
+            description: What the AFE approves.
+          - name: ApprovedDate
+            description: Date the AFE was approved.
+          - name: Status
+            description: Open or Closed.
+          - name: ClosedDate
+            description: Date the AFE closed. Empty while open.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: afe_line
+        description: The estimate and the actual cost of an AFE by capital cost code. One row per AFE and cost code.
+        columns:
+          - name: AfeLineId
+            description: Unique AFE line number.
+          - name: AfeId
+            description: The AFE.
+          - name: CostCode
+            description: The capital cost code (CAP100 to CAP400).
+          - name: EstimatedAmount
+            description: The approved estimate, in US dollars.
+          - name: ActualAmount
+            description: Capital invoices charged so far, in US dollars.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: ap_invoice
+        description: Vendor invoices from the accounting system. Capital invoices carry an AFE number.
+        columns:
+          - name: ApInvoiceId
+            description: Unique invoice row number.
+          - name: VendorId
+            description: The vendor that billed.
+          - name: WellId
+            description: The well the invoice is charged to.
+          - name: LeaseId
+            description: The lease the invoice is charged to.
+          - name: AfeId
+            description: The AFE a capital invoice is charged to.
+          - name: CostCode
+            description: The cost code the invoice is coded to.
+          - name: InvoiceDate
+            description: Invoice date.
+          - name: Amount
+            description: Invoice amount in US dollars.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: cost_code
+        description: The cost codes invoices and AFE lines are coded to. One row per code.
+        columns:
+          - name: CostCode
+            description: The cost code, such as CAP100.
+          - name: Description
+            description: What the code covers.
+          - name: Category
+            description: LOE, Workover, Tax, G&A or Capital.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+  - name: land
+    description: Tables built by the oilgas_land project, read here for lease names.
+    database: "{{ target.database }}"
+    schema: "demo_oilgas_land_{{ target.name }}"
+    tables:
+      - name: dim_lease
+        identifier: dim_lease
+        description: One row per lease with its terms and wells.
+        columns:
+          - name: lease_id
+            description: Unique lease number.
+          - name: lease_name
+            description: Demo lease name.
+          - name: county
+            description: County the lease is in.

@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: int_afe_line_invoices
+    description: Capital invoices added up per AFE and cost code. This is the invoice side of an AFE line's actual. Synthetic Demo data.
+    columns:
+      - name: afe_id
+        description: The AFE.
+        tests: [not_null]
+      - name: cost_code
+        description: The capital cost code.
+        tests: [not_null]
+      - name: invoice_count
+        description: Invoices charged to the AFE and cost code.
+      - name: invoiced_amount
+        description: Sum of the invoices, in US dollars.
+      - name: first_invoice_date
+        description: Date of the earliest invoice.
+      - name: last_invoice_date
+        description: Date of the latest invoice.
+  - name: int_afe_lines
+    description: One row per AFE line with its AFE, the cost code's name and the invoices charged to it. Synthetic Demo data.
+    columns:
+      - name: afe_line_id
+        description: Unique AFE line number.
+        tests: [unique, not_null]
+      - name: afe_id
+        description: The AFE.
+      - name: afe_number
+        description: The AFE number people quote.
+      - name: well_id
+        description: The well the AFE spends on.
+      - name: lease_id
+        description: The lease the well sits on.
+      - name: afe_type
+        description: The AFE project type.
+      - name: afe_status
+        description: Open or Closed.
+      - name: approved_date
+        description: Date the AFE was approved.
+      - name: closed_date
+        description: Date the AFE closed. Empty while open.
+      - name: cost_code
+        description: The capital cost code.
+      - name: cost_code_description
+        description: What the cost code covers.
+      - name: estimated_amount
+        description: The approved estimate, in US dollars.
+      - name: actual_amount
+        description: The actual accounting keeps on the line, in US dollars.
+      - name: invoiced_amount
+        description: Sum of the capital invoices charged to the line, in US dollars.
+      - name: invoice_count
+        description: Invoices charged to the line.
+      - name: last_invoice_date
+        description: Date of the latest invoice.
