@@ -37,7 +37,7 @@ PROJECTS = {
     'oilgas_revenue': {
         'schema': 'oilgas_revenue',
         'models': {'stg_division_orders', 'stg_monthly_revenue', 'int_well_month_value', 'int_owner_well_month',
-                   'fct_well_revenue_monthly', 'fct_owner_revenue_monthly'},
+                   'fct_well_revenue_monthly', 'fct_owner_well_revenue_monthly', 'fct_owner_revenue_monthly'},
         'reads': {'volumes': 'oilgas', 'land': 'oilgas_land'},
     },
     'oilgas_los': {
@@ -61,7 +61,8 @@ PROJECTS = {
     },
     'oilgas_financial': {
         'schema': 'oilgas_financial',
-        'models': {'stg_accounts', 'stg_gl_entries', 'stg_partners', 'stg_jib_billings', 'int_gl_lines', 'int_journals',
+        'models': {'stg_accounts', 'stg_gl_entries', 'stg_partners', 'stg_jib_billings', 'stg_division_orders', 'int_gl_lines', 'int_journals',
+                   'int_well_royalty_interest',
                    'fct_trial_balance', 'fct_jib_by_partner', 'fct_netback_monthly', 'fct_netback_by_field_monthly'},
         'reads': {'volumes': 'oilgas', 'revenue': 'oilgas_revenue', 'los': 'oilgas_los'},
     },

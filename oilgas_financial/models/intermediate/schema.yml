@@ -62,3 +62,13 @@ models:
               arguments:
                 values: [true]
                 quote: false
+  - name: int_well_royalty_interest
+    description: The share of each well's revenue that goes to royalty owners. Royalty owners are the owners on the division order that no partner row points to through its owner number, so working interest partners are left out. Synthetic Demo data.
+    columns:
+      - name: well_id
+        description: The well.
+        tests: [unique, not_null]
+      - name: royalty_owner_count
+        description: Royalty owners on the well's division order.
+      - name: royalty_decimal
+        description: Sum of the royalty owners' decimal interests.

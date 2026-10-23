@@ -30,6 +30,28 @@ models:
         description: Gas revenue at the Demo price, in US dollars.
       - name: gross_revenue
         description: Oil plus gas revenue, in US dollars.
+  - name: fct_owner_well_revenue_monthly
+    description: Revenue paid to each owner from each well per month, at the Demo prices and the division order's decimal interest. Financial reads it to check the royalty it takes off a well's revenue. Synthetic Demo data.
+    columns:
+      - name: owner_well_key
+        description: Unique key made from the owner, well and month.
+        tests: [unique, not_null]
+      - name: owner_id
+        description: The owner paid.
+        tests: [not_null]
+      - name: well_id
+        description: The well the revenue comes from.
+        tests: [not_null]
+      - name: production_month
+        description: First day of the production month.
+      - name: decimal_interest
+        description: The owner's share of the well's revenue as a decimal.
+      - name: oil_revenue
+        description: The owner's share of oil revenue, in US dollars.
+      - name: gas_revenue
+        description: The owner's share of gas revenue, in US dollars.
+      - name: total_revenue
+        description: The owner's share of oil plus gas revenue, in US dollars.
   - name: fct_owner_revenue_monthly
     description: Revenue paid to each owner per month, built from allocated volumes, the Demo prices and the division orders, next to what production accounting reported. A difference other than zero means the two disagree. Synthetic Demo data.
     columns:

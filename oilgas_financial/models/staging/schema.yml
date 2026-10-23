@@ -110,3 +110,17 @@ models:
         description: Bill status.
       - name: modified_at
         description: When the row last changed in the source, in UTC.
+  - name: stg_division_orders
+    description: The division orders with snake case names, one row per well and owner. Used to find the royalty owners of each well. Synthetic Demo data.
+    columns:
+      - name: division_order_id
+        description: Unique division order number.
+        tests: [unique, not_null]
+      - name: well_id
+        description: The well the order covers.
+        tests: [not_null]
+      - name: owner_id
+        description: The owner the order pays.
+        tests: [not_null]
+      - name: decimal_interest
+        description: The owner's share of the well's revenue as a decimal.

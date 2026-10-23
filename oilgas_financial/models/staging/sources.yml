@@ -83,6 +83,17 @@ sources:
             description: Bill status.
           - name: ModifiedDate
             description: When the row last changed in the source, in UTC.
+      - name: division_order
+        description: The division orders that set each owner's decimal interest in a well. One row per well and owner. Read here to find the royalty owners.
+        columns:
+          - name: DivisionOrderId
+            description: Unique division order number.
+          - name: WellId
+            description: The well the order covers.
+          - name: OwnerId
+            description: The owner the order pays.
+          - name: DecimalInterest
+            description: The owner's share of the well's revenue as a decimal.
       - name: ap_invoice
         description: Vendor invoices from the accounting system. Read here only to check the ledger and the netback against the invoices.
         columns:
@@ -152,6 +163,18 @@ sources:
             description: Gas revenue, in US dollars.
           - name: gross_revenue
             description: Oil plus gas revenue, in US dollars.
+      - name: fct_owner_well_revenue_monthly
+        identifier: fct_owner_well_revenue_monthly
+        description: Revenue paid to each owner from each well per month.
+        columns:
+          - name: owner_id
+            description: The owner paid.
+          - name: well_id
+            description: The well the revenue comes from.
+          - name: production_month
+            description: First day of the production month.
+          - name: total_revenue
+            description: The owner's share of oil plus gas revenue, in US dollars.
   - name: los
     description: Tables built by the oilgas_los project.
     database: "{{ target.database }}"

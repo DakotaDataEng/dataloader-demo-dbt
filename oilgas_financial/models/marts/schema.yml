@@ -46,7 +46,7 @@ models:
       - name: billed_share
         description: Billed amount divided by gross cost. It is the partner's working interest.
   - name: fct_netback_monthly
-    description: Operating netback per well per month, which is gross revenue less LOE, workover and production taxes, and the same per BOE. Reads the revenue, LOS and volumes projects. G&A is not in a well's netback. The latest month has no taxes yet because they post a month late. Synthetic Demo data.
+    description: Operating netback per well per month, which is gross revenue less royalties, production taxes, LOE and workover, and the same per BOE. Royalty is gross revenue times the decimal interest of the royalty owners, who are the owners on the division order that are not working interest partners. There is no transport in the data, and G&A is not in a well's netback. Reads the revenue, LOS and volumes projects. The latest month has no taxes yet because they post a month late. Synthetic Demo data.
     columns:
       - name: well_id
         description: The well.
@@ -62,6 +62,8 @@ models:
         description: Allocated oil plus allocated gas at 6 Mcf per barrel, from the volumes project.
       - name: gross_revenue
         description: Gross (8/8ths) oil and gas revenue at the Demo prices, from the revenue project.
+      - name: royalty_cost
+        description: Royalty paid out of gross revenue, in US dollars. Gross revenue times the decimal interest of the well's royalty owners.
       - name: loe_cost
         description: Lease operating expense, from the LOS project.
       - name: workover_cost
@@ -69,13 +71,15 @@ models:
       - name: production_tax_cost
         description: Severance plus ad valorem tax, from the LOS project.
       - name: netback
-        description: Gross revenue less LOE, workover and production taxes, in US dollars.
+        description: Gross revenue less royalties, production taxes, LOE and workover, in US dollars.
       - name: revenue_per_boe
         description: Gross revenue divided by BOE.
+      - name: royalty_per_boe
+        description: Royalty divided by BOE.
       - name: los_per_boe
         description: LOE plus workover plus production taxes, divided by BOE.
       - name: netback_per_boe
-        description: Netback divided by BOE. It equals revenue per BOE less LOS per BOE.
+        description: Netback divided by BOE. It equals revenue per BOE less royalty per BOE less LOS per BOE.
   - name: fct_netback_by_field_monthly
     description: Netback per field per month, added up from the wells, with netback per BOE on the field's volumes. Synthetic Demo data.
     columns:
@@ -91,9 +95,11 @@ models:
         description: Allocated BOE for the field.
       - name: gross_revenue
         description: Gross oil and gas revenue, in US dollars.
+      - name: royalty_cost
+        description: Royalty paid out of gross revenue, in US dollars.
       - name: total_los_cost
         description: LOE plus workover plus production taxes, in US dollars.
       - name: netback
-        description: Gross revenue less LOS cost, in US dollars.
+        description: Gross revenue less royalties and LOS cost, in US dollars.
       - name: netback_per_boe
         description: Netback divided by BOE.

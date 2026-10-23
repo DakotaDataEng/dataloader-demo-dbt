@@ -33,7 +33,7 @@ Lakehouse runs on DataLoader's bundled dbt (dbt-oss 2.0.5 with DuckDB), so it ne
 ## Checks
 
 - `sales/tests/verify_parse.py` parses Sales, Operations and Finance with both targets (six pairs) using the runtime above and checks each manifest has the shape DataLoader reads. Run it with this repository mounted read only at `/demo`.
-- `oilgas/tests/verify_oilgas.py` parses the seven oil and gas projects with both targets. It checks that every model and column is described, that no test was silently disabled, and that every source one project reads from another matches a model that project builds (11 edges). With `--build --pg-port N` it also builds and tests every project with both targets against a disposable Postgres container loaded by `oilgas/tests/load_fixtures.py`. See [Running the oil and gas checks](#running-the-oil-and-gas-checks).
+- `oilgas/tests/verify_oilgas.py` parses the seven oil and gas projects with both targets. It checks that every model and column is described, that no test was silently disabled, and that every source one project reads from another matches a model that project builds (12 edges). With `--build --pg-port N` it also builds and tests every project with both targets against a disposable Postgres container loaded by `oilgas/tests/load_fixtures.py`. See [Running the oil and gas checks](#running-the-oil-and-gas-checks).
 - `sales/tests/verify_sql.cjs <container>` runs every model in both schemas against a disposable Postgres container you own and checks 40 results (costs, statuses, dates across daylight saving, warning boundaries). It needs Node and Docker.
 
 Each project's `tests/` folder also holds the dbt data tests that run with every build.
@@ -46,11 +46,11 @@ The oil and gas flavor is a Texas operator with field data capture, production a
 |---|---|---|---|
 | Volumes | `oilgas/` | `fct_production`, `dim_well`, `fct_production_monthly`, `fct_allocation_variance` | Field volumes beside allocated volumes, and BOE per well per month. Every other family reads `fct_production_monthly`, so it is the hub of Lineage. |
 | Land | `oilgas_land/` | `dim_owner`, `dim_lease`, `fct_lease_interest`, `fct_lease_production_monthly` | Leases, who owns what on each, and production per lease. Reads volumes. |
-| Revenue | `oilgas_revenue/` | `fct_well_revenue_monthly`, `fct_owner_revenue_monthly` | Revenue per well at the Demo prices, and owner revenue by division order checked against what production accounting reported. Reads volumes and land. |
+| Revenue | `oilgas_revenue/` | `fct_well_revenue_monthly`, `fct_owner_well_revenue_monthly`, `fct_owner_revenue_monthly` | Revenue per well at the Demo prices, revenue paid to each owner by well and month from the division orders, and owner revenue checked against what production accounting reported. Reads volumes and land. |
 | LOS | `oilgas_los/` | `fct_los_monthly`, `fct_los_per_boe`, `fct_los_summary_monthly` | The lease operating statement by well, month and cost code, and LOS cost per BOE. Reads volumes. |
 | Capital | `oilgas_capital/` | `fct_afe_variance`, `fct_afe_summary`, `fct_capital_spend_monthly` | AFE estimate against actual by cost code, which runs over and under. Reads accounting and land. |
 | Reserves | `oilgas_reserves/` | `fct_reserves_by_category`, `fct_well_reserves`, `fct_reserves_vs_actuals`, `fct_reserves_run_change`, `fct_price_deck` | PDP, PDNP and PUD reserves and PV10 by report, the forecast held against what the wells produced, and how reserves moved between reports. Reads volumes. |
-| Financial | `oilgas_financial/` | `fct_trial_balance`, `fct_jib_by_partner`, `fct_netback_monthly`, `fct_netback_by_field_monthly` | The ledger balancing, joint interest billing by partner, and operating netback per BOE. Reads revenue, LOS and volumes. |
+| Financial | `oilgas_financial/` | `fct_trial_balance`, `fct_jib_by_partner`, `fct_netback_monthly`, `fct_netback_by_field_monthly` | The ledger balancing, joint interest billing by partner, and operating netback per BOE after royalties. Reads revenue, LOS and volumes. |
 
 The projects build into `demo_oilgas_<target>` (volumes) and `demo_oilgas_<family>_<target>` for the others. The existing `oilgas/` project is the volumes family under its old name, so its folder, project name and schema did not change.
 
@@ -67,7 +67,7 @@ A project reads another project's mart as a source, as Finance reads Sales, so L
 | capital | `dim_lease` | land |
 | reserves | `dim_well`, `fct_production_monthly` | volumes |
 | financial | `fct_production_monthly` | volumes |
-| financial | `fct_well_revenue_monthly` | revenue |
+| financial | `fct_well_revenue_monthly`, `fct_owner_well_revenue_monthly` | revenue |
 | financial | `fct_los_per_boe` | LOS |
 
 Capital's AFE variance reads the accounting tables (`afe`, `afe_line`, `ap_invoice`, `cost_code`) directly.
@@ -88,7 +88,8 @@ The same path starts from `demo_oilgas_reserves.fct_reserves_vs_actuals`: it rea
 
 - BOE (barrel of oil equivalent) is oil plus gas at 6 Mcf per barrel. The models compute it, the source does not store it. It uses allocated volumes unless a column says field.
 - LOS (lease operating statement) cost lines are LOE, workover, production taxes and G&A. Production taxes are invoiced on the 1st of the month after the production they tax, so the LOS family places them in the production month. G&A has no well, so it appears only at the operator level.
-- Netback is gross (8/8ths) revenue less LOE, workover and production taxes, per well and month. G&A is not in it.
+- Netback is operating netback per well and month: gross (8/8ths) revenue less royalties, less production taxes, less LOE and workover. There is no transport in the data, and G&A is not in it. Netback per BOE is the same figure divided by allocated BOE, so it equals revenue per BOE less royalty per BOE less LOS per BOE. `gross_revenue` stays a column of `fct_netback_monthly`.
+- Royalty is gross revenue times the sum of the division order decimal interests of the well's royalty owners. A royalty owner is an owner on the well's division order that no partner row points to through `partner.OwnerId`, so the working interest partners (the Demo's non-operating companies) are left out. The Demo seed names the royalty owners "Demo Mineral Owner".
 - The Demo prices are $68.00 a barrel and $2.75 an Mcf. They are the dbt vars `demo_oil_price_usd_bbl` and `demo_gas_price_usd_mcf` in `oilgas_revenue/dbt_project.yml`, the same prices the source uses for tax invoices and monthly revenue.
 - AFE variance is actual less estimate, so a positive variance is over the estimate. While an AFE is open, a negative variance includes spend not made yet.
 - A well's lease comes from the `well_lease` table, never from the well number.
@@ -121,4 +122,4 @@ Each project's `tests/` folder holds reconciliation tests that run with every bu
 - LOS: LOS cost per well per month equals the AP invoices for it, and the operator total equals all LOS invoices.
 - Capital: AFE variance equals actual less estimate, an AFE line's actual equals its capital invoices, and AFE totals add up from their lines.
 - Reserves: EUR equals cumulative plus remaining, remaining equals the sum of the forecast months, and category totals add up to the well rows.
-- Financial: the ledger balances overall and by journal, credits to accounts payable equal the AP invoices, debits to joint interest receivable equal the JIB bills, and netback per BOE equals revenue less LOS less taxes per BOE, rebuilt from the raw invoices and allocations.
+- Financial: the ledger balances overall and by journal, credits to accounts payable equal the AP invoices, debits to joint interest receivable equal the JIB bills, royalty cost equals the owner revenue the revenue project pays the royalty owners for the well and month within a cent, and netback per BOE equals revenue less royalties less LOS less taxes per BOE, rebuilt from the raw invoices, allocations and division orders.
