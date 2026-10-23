@@ -1,0 +1,76 @@
+version: 2
+
+models:
+  - name: dim_owner
+    description: One row per owner with the number of leases the owner holds an interest in. Revenue reads it for owner names. Synthetic Demo data.
+    columns:
+      - name: owner_id
+        description: Unique owner number.
+        tests: [unique, not_null]
+      - name: owner_name
+        description: Demo owner name.
+      - name: owner_type
+        description: Individual, Trust or Company.
+      - name: lease_count
+        description: Number of leases the owner holds an interest in.
+  - name: dim_lease
+    description: One row per lease with its terms, its wells and the total of the owners' interests, which is 1 for a complete lease. Capital reads it for lease names. Synthetic Demo data.
+    columns:
+      - name: lease_id
+        description: Unique lease number.
+        tests: [unique, not_null]
+      - name: lease_name
+        description: Demo lease name.
+      - name: county
+        description: County the lease is in.
+      - name: acres
+        description: Lease size in acres.
+      - name: effective_date
+        description: Date the lease took effect.
+      - name: expiry_date
+        description: Date the lease expires unless held.
+      - name: well_count
+        description: Wells on the lease.
+      - name: owner_count
+        description: Owners with an interest in the lease.
+      - name: total_decimal_interest
+        description: Sum of the owners' decimal interests. It should be 1.
+  - name: fct_lease_interest
+    description: One row per lease and owner with the owner's decimal interest in the lease. Shows who owns what on each lease. Synthetic Demo data.
+    columns:
+      - name: lease_interest_id
+        description: Unique row number.
+        tests: [unique, not_null]
+      - name: lease_id
+        description: The lease.
+      - name: lease_name
+        description: Demo lease name.
+      - name: owner_id
+        description: The owner.
+      - name: owner_name
+        description: Demo owner name.
+      - name: owner_type
+        description: Individual, Trust or Company.
+      - name: decimal_interest
+        description: The owner's share of the lease as a decimal.
+  - name: fct_lease_production_monthly
+    description: Allocated oil, gas and BOE per lease per month, added up from the wells on the lease. Reads the volumes project, so Lineage crosses from land back to production. Synthetic Demo data.
+    columns:
+      - name: lease_id
+        description: The lease.
+        tests: [not_null]
+      - name: lease_name
+        description: Demo lease name.
+      - name: county
+        description: County the lease is in.
+      - name: production_month
+        description: First day of the calendar month.
+        tests: [not_null]
+      - name: producing_wells
+        description: Wells on the lease with volumes in the month.
+      - name: allocated_oil_bbl
+        description: Allocated oil, in barrels.
+      - name: allocated_gas_mcf
+        description: Allocated gas, in thousand cubic feet.
+      - name: allocated_boe
+        description: Allocated oil plus allocated gas at 6 Mcf per barrel.
