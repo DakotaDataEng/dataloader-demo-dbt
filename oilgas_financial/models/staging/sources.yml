@@ -83,6 +83,37 @@ sources:
             description: Bill status.
           - name: ModifiedDate
             description: When the row last changed in the source, in UTC.
+      - name: ap_invoice
+        description: Vendor invoices from the accounting system. Read here only to check the ledger and the netback against the invoices.
+        columns:
+          - name: ApInvoiceId
+            description: Unique invoice row number.
+          - name: WellId
+            description: The well the invoice is charged to.
+          - name: CostCode
+            description: The cost code the invoice is coded to.
+          - name: InvoiceDate
+            description: Invoice date.
+          - name: Amount
+            description: Invoice amount in US dollars.
+      - name: cost_code
+        description: The cost codes invoices are coded to. Read here only to group invoices by category.
+        columns:
+          - name: CostCode
+            description: The cost code, such as LOE100.
+          - name: Category
+            description: LOE, Workover, Tax, G&A or Capital.
+      - name: daily_allocation
+        description: Allocated daily volumes per well from production accounting. Read here only to check netback per BOE.
+        columns:
+          - name: WellId
+            description: The well the volumes are allocated to.
+          - name: ProductionDate
+            description: The production day being allocated.
+          - name: AllocatedOilBbl
+            description: Allocated oil, in barrels.
+          - name: AllocatedGasMcf
+            description: Allocated gas, in thousand cubic feet.
   - name: volumes
     description: Tables built by the oilgas (volumes) project.
     database: "{{ target.database }}"
