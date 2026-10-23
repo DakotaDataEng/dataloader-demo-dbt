@@ -1,0 +1,60 @@
+version: 2
+
+sources:
+  - name: og_raw
+    description: Demo oil and gas raw tables loaded by DataLoader. They keep the source's column names. Synthetic Demo data only.
+    schema: "demo_og_raw_{{ target.name }}"
+    tables:
+      - name: well
+        description: The wells the operator produces, from field data capture. One row per well.
+        columns:
+          - name: WellId
+            description: Unique well number.
+          - name: ApiNumber
+            description: API well number. Demo numbers start at 42-000-00001.
+          - name: WellName
+            description: Demo well name.
+          - name: Operator
+            description: Company that operates the well.
+          - name: Field
+            description: Field the well produces from.
+          - name: SpudDate
+            description: Date drilling began.
+          - name: Status
+            description: Well status.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: daily_volume
+        description: Volumes measured in the field and captured by pumpers, one row per well per production day.
+        columns:
+          - name: VolumeId
+            description: Unique row number.
+          - name: WellId
+            description: The well the volumes were measured on.
+          - name: ProductionDate
+            description: The production day.
+          - name: OilBbl
+            description: Measured oil, in barrels.
+          - name: GasMcf
+            description: Measured gas, in thousand cubic feet.
+          - name: WaterBbl
+            description: Measured water, in barrels.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: daily_allocation
+        description: Allocated daily volumes per well from production accounting. Taxes and revenue use these.
+        columns:
+          - name: AllocationId
+            description: Unique allocation number.
+          - name: WellId
+            description: The well the volumes are allocated to.
+          - name: ProductionDate
+            description: The production day being allocated.
+          - name: AllocatedOilBbl
+            description: Allocated oil, in barrels.
+          - name: AllocatedGasMcf
+            description: Allocated gas, in thousand cubic feet.
+          - name: AllocatedWaterBbl
+            description: Allocated water, in barrels.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
