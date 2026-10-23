@@ -1,0 +1,75 @@
+version: 2
+
+sources:
+  - name: og_raw
+    description: Demo oil and gas raw tables loaded by DataLoader. They keep the source's column names. Synthetic Demo data only.
+    schema: "demo_og_raw_{{ target.name }}"
+    tables:
+      - name: ap_invoice
+        description: Vendor invoices from the accounting system, one cost code each. Lease operating expense, workover, production taxes, G&A and capital all arrive here.
+        columns:
+          - name: ApInvoiceId
+            description: Unique invoice row number.
+          - name: InvoiceNumber
+            description: Invoice number.
+          - name: VendorId
+            description: The vendor that billed.
+          - name: WellId
+            description: The well the invoice is charged to. Empty for G&A.
+          - name: LeaseId
+            description: The lease the invoice is charged to. Empty for G&A.
+          - name: AfeId
+            description: The AFE a capital invoice is charged to. Empty for other invoices.
+          - name: CostCode
+            description: The cost code the invoice is coded to.
+          - name: InvoiceDate
+            description: Invoice date.
+          - name: Amount
+            description: Invoice amount in US dollars, gross (8/8ths).
+          - name: Status
+            description: Approved or Paid.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: cost_code
+        description: The cost codes invoices and AFE lines are coded to. One row per code.
+        columns:
+          - name: CostCode
+            description: The cost code, such as LOE100.
+          - name: Description
+            description: What the code covers.
+          - name: Category
+            description: LOE, Workover, Tax, G&A or Capital.
+          - name: AccountId
+            description: The ledger account the code posts to.
+          - name: DefaultVendorId
+            description: The vendor usually billing this code.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: vendor
+        description: Companies that bill the operator, including the state comptroller and the county tax office.
+        columns:
+          - name: VendorId
+            description: Unique vendor number.
+          - name: VendorName
+            description: Demo vendor name.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+  - name: volumes
+    description: Tables built by the oilgas (volumes) project, read here so LOS per BOE uses the same volumes as everyone else.
+    database: "{{ target.database }}"
+    schema: "demo_oilgas_{{ target.name }}"
+    tables:
+      - name: fct_production_monthly
+        identifier: fct_production_monthly
+        description: Field and allocated volumes and BOE per well per calendar month.
+        columns:
+          - name: well_id
+            description: The well.
+          - name: well_name
+            description: Demo well name.
+          - name: field
+            description: Field the well produces from.
+          - name: production_month
+            description: First day of the calendar month.
+          - name: allocated_boe
+            description: Allocated oil plus allocated gas at 6 Mcf per barrel.

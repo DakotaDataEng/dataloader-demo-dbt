@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: int_los_lines
+    description: The invoices that make up a lease operating statement, one row per invoice with its LOS line, category, vendor and LOS month. Capital invoices are left out. Production taxes are placed in the month they tax, not the month they were invoiced. Synthetic Demo data.
+    columns:
+      - name: ap_invoice_id
+        description: Unique invoice row number.
+        tests: [unique, not_null]
+      - name: invoice_number
+        description: Invoice number.
+      - name: well_id
+        description: The well the invoice is charged to. Empty for G&A.
+      - name: lease_id
+        description: The lease the invoice is charged to. Empty for G&A.
+      - name: cost_code
+        description: The cost code, which is the LOS line.
+      - name: los_line
+        description: What the cost code covers, such as chemicals or severance tax.
+      - name: category
+        description: LOE, Workover, Tax or G&A.
+        tests:
+          - accepted_values:
+              arguments:
+                values: [LOE, Workover, Tax, G&A]
+      - name: vendor_name
+        description: Demo vendor name.
+      - name: invoice_date
+        description: Invoice date.
+      - name: los_month
+        description: First day of the month the cost belongs to. For taxes it is the month before the invoice date.
+        tests: [not_null]
+      - name: amount
+        description: Invoice amount in US dollars, gross (8/8ths).
