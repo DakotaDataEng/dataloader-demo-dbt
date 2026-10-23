@@ -1,0 +1,79 @@
+version: 2
+
+models:
+  - name: int_reserve_rows
+    description: One row per reserve row with the report's dates and the well's name and field from the volumes project. Adds Mboe, which is thousand barrels of oil plus million cubic feet of gas divided by 6, and marks the latest report. Synthetic Demo data.
+    columns:
+      - name: well_reserve_id
+        description: Unique row number.
+        tests: [unique, not_null]
+      - name: run_id
+        description: The report.
+      - name: as_of_date
+        description: The quarter end the reserves are measured at.
+      - name: issued_date
+        description: Date the report was issued.
+      - name: run_name
+        description: Demo report name.
+      - name: category
+        description: PDP, PDNP or PUD.
+      - name: well_id
+        description: The well. Empty on PUD rows.
+      - name: lease_id
+        description: The lease.
+      - name: reserve_name
+        description: The well name, or the location name on PUD rows.
+      - name: location_name
+        description: The undrilled location, on PUD rows only.
+      - name: field
+        description: Field the well produces from, from the volumes project. Empty on PUD rows.
+      - name: net_revenue_interest
+        description: Net revenue interest as a decimal.
+      - name: cum_oil_mbbl
+        description: Oil produced to the as-of date, in thousand barrels.
+      - name: cum_gas_mmcf
+        description: Gas produced to the as-of date, in million cubic feet.
+      - name: remaining_oil_mbbl
+        description: Remaining oil reserves, in thousand barrels, gross.
+      - name: remaining_gas_mmcf
+        description: Remaining gas reserves, in million cubic feet, gross.
+      - name: remaining_mboe
+        description: Remaining oil plus remaining gas divided by 6, in thousand barrels of oil equivalent.
+      - name: eur_oil_mbbl
+        description: Estimated ultimate recovery of oil, in thousand barrels.
+      - name: eur_gas_mmcf
+        description: Estimated ultimate recovery of gas, in million cubic feet.
+      - name: eur_mboe
+        description: EUR oil plus EUR gas divided by 6, in thousand barrels of oil equivalent.
+      - name: development_capex_usd
+        description: Capital still to spend to bring the reserves on, in US dollars.
+      - name: pv10_usd
+        description: Present value at a 10 percent discount, net to the operator, in US dollars.
+      - name: is_latest_run
+        description: True on the most recent report.
+  - name: int_forecast_boe
+    description: The monthly forecast with the report, category and well it belongs to, and the month's Mboe. Synthetic Demo data.
+    columns:
+      - name: forecast_id
+        description: Unique row number.
+        tests: [unique, not_null]
+      - name: well_reserve_id
+        description: The reserve row.
+      - name: run_id
+        description: The report.
+      - name: as_of_date
+        description: The quarter end the reserves are measured at.
+      - name: category
+        description: PDP, PDNP or PUD.
+      - name: well_id
+        description: The well. Empty on PUD rows.
+      - name: reserve_name
+        description: The well name, or the location name on PUD rows.
+      - name: forecast_month
+        description: First day of the forecast month.
+      - name: oil_mbbl
+        description: Forecast oil, in thousand barrels.
+      - name: gas_mmcf
+        description: Forecast gas, in million cubic feet.
+      - name: forecast_mboe
+        description: Forecast oil plus forecast gas divided by 6, in thousand barrels of oil equivalent.

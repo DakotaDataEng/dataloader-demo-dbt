@@ -1,0 +1,22 @@
+name: demo_oilgas_revenue
+version: '1.0.0'
+config-version: 2
+profile: dataloader
+model-paths: [models]
+test-paths: [tests]
+
+# The Demo source holds no price table for sales, so revenue uses these two flat Demo prices.
+# They are the same prices the source's tax invoices and monthly revenue use.
+vars:
+  demo_oil_price_usd_bbl: 68.00
+  demo_gas_price_usd_mcf: 2.75
+
+models:
+  demo_oilgas_revenue:
+    +tags: [demo, oilgas, revenue, nightly]
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table

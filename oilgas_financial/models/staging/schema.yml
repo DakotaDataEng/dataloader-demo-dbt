@@ -1,0 +1,126 @@
+version: 2
+
+models:
+  - name: stg_accounts
+    description: The chart of accounts with snake case names. One row per ledger account. Synthetic Demo data.
+    columns:
+      - name: account_id
+        description: Unique account row number.
+        tests: [unique, not_null]
+      - name: account_number
+        description: The account number, from 1000 to 6000.
+        tests: [unique, not_null]
+      - name: account_name
+        description: Demo account name.
+      - name: account_type
+        description: Asset, Liability, Equity, Revenue or Expense.
+        tests:
+          - accepted_values:
+              arguments:
+                values: [Asset, Liability, Equity, Revenue, Expense]
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.
+  - name: stg_gl_entries
+    description: The general ledger lines with snake case names. A ledger line never changes once written. Synthetic Demo data.
+    columns:
+      - name: gl_entry_id
+        description: Unique ledger line number.
+        tests: [unique, not_null]
+      - name: journal_id
+        description: The journal the line belongs to. AP-n for an invoice, JIB-n for a joint interest bill.
+        tests: [not_null]
+      - name: posting_date
+        description: Date the line posted.
+      - name: account_id
+        description: The ledger account.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_accounts')
+                field: account_id
+      - name: well_id
+        description: The well the line is charged to, when there is one.
+      - name: lease_id
+        description: The lease the line is charged to, when there is one.
+      - name: cost_code
+        description: The cost code, on invoice lines.
+      - name: debit
+        description: Debit amount in US dollars.
+      - name: credit
+        description: Credit amount in US dollars.
+      - name: source_type
+        description: AP for an invoice or JIB for a joint interest bill.
+        tests:
+          - accepted_values:
+              arguments:
+                values: [AP, JIB]
+      - name: source_id
+        description: The invoice or bill the line came from.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.
+  - name: stg_partners
+    description: The operators and non-operating partners, with snake case names. One row per partner. Synthetic Demo data.
+    columns:
+      - name: partner_id
+        description: Unique partner number.
+        tests: [unique, not_null]
+      - name: partner_name
+        description: Demo partner name.
+      - name: partner_type
+        description: Operator or Non-operator.
+        tests:
+          - accepted_values:
+              arguments:
+                values: [Operator, Non-operator]
+      - name: owner_id
+        description: The land system owner, for non-operating partners only.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.
+  - name: stg_jib_billings
+    description: The operator's monthly joint interest bills to non-operating partners, with snake case names. One row per cost month, well and partner. A bill never changes once written. Synthetic Demo data.
+    columns:
+      - name: jib_billing_id
+        description: Unique bill number.
+        tests: [unique, not_null]
+      - name: billing_month
+        description: First day of the cost month being billed.
+      - name: billing_date
+        description: Date the bill was issued.
+      - name: well_id
+        description: The well billed.
+        tests: [not_null]
+      - name: lease_id
+        description: The lease the well sits on.
+      - name: partner_id
+        description: The non-operating partner billed.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_partners')
+                field: partner_id
+      - name: working_interest
+        description: The partner's working interest in the well.
+      - name: gross_cost
+        description: The month's LOE, workover and capital invoices on the well, in US dollars.
+      - name: billed_amount
+        description: Gross cost times working interest, in US dollars.
+      - name: status
+        description: Bill status.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.
+  - name: stg_division_orders
+    description: The division orders with snake case names, one row per well and owner. Used to find the royalty owners of each well. Synthetic Demo data.
+    columns:
+      - name: division_order_id
+        description: Unique division order number.
+        tests: [unique, not_null]
+      - name: well_id
+        description: The well the order covers.
+        tests: [not_null]
+      - name: owner_id
+        description: The owner the order pays.
+        tests: [not_null]
+      - name: decimal_interest
+        description: The owner's share of the well's revenue as a decimal.

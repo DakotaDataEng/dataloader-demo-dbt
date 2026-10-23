@@ -1,0 +1,196 @@
+version: 2
+
+sources:
+  - name: og_raw
+    description: Demo oil and gas raw tables loaded by DataLoader. They keep the source's column names. Synthetic Demo data only.
+    schema: "demo_og_raw_{{ target.name }}"
+    tables:
+      - name: account
+        description: The chart of accounts. One row per ledger account.
+        columns:
+          - name: AccountId
+            description: Unique account row number.
+          - name: AccountNumber
+            description: The account number, from 1000 to 6000.
+          - name: AccountName
+            description: Demo account name.
+          - name: AccountType
+            description: Asset, Liability, Equity, Revenue or Expense.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: gl_entry
+        description: The general ledger. One row per ledger line, a debit line and a credit line for every journal.
+        columns:
+          - name: GlEntryId
+            description: Unique ledger line number.
+          - name: JournalId
+            description: The journal the line belongs to. AP-n for an invoice, JIB-n for a joint interest bill.
+          - name: PostingDate
+            description: Date the line posted.
+          - name: AccountId
+            description: The ledger account.
+          - name: WellId
+            description: The well the line is charged to, when there is one.
+          - name: LeaseId
+            description: The lease the line is charged to, when there is one.
+          - name: CostCode
+            description: The cost code, on invoice lines.
+          - name: Debit
+            description: Debit amount in US dollars.
+          - name: Credit
+            description: Credit amount in US dollars.
+          - name: SourceType
+            description: AP for an invoice or JIB for a joint interest bill.
+          - name: SourceId
+            description: The invoice or bill the line came from.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: partner
+        description: The operators and non-operating partners the operator shares wells with. One row per partner.
+        columns:
+          - name: PartnerId
+            description: Unique partner number.
+          - name: PartnerName
+            description: Demo partner name.
+          - name: PartnerType
+            description: Operator or Non-operator.
+          - name: OwnerId
+            description: The land system owner, for non-operating partners only.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: jib_billing
+        description: The operator's monthly joint interest bills to non-operating partners. One row per cost month, well and partner.
+        columns:
+          - name: JibBillingId
+            description: Unique bill number.
+          - name: BillingMonth
+            description: First day of the cost month being billed.
+          - name: BillingDate
+            description: Date the bill was issued.
+          - name: WellId
+            description: The well billed.
+          - name: LeaseId
+            description: The lease the well sits on.
+          - name: PartnerId
+            description: The non-operating partner billed.
+          - name: WorkingInterest
+            description: The partner's working interest in the well.
+          - name: GrossCost
+            description: The month's LOE, workover and capital invoices on the well, in US dollars.
+          - name: BilledAmount
+            description: Gross cost times working interest, in US dollars.
+          - name: Status
+            description: Bill status.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: division_order
+        description: The division orders that set each owner's decimal interest in a well. One row per well and owner. Read here to find the royalty owners.
+        columns:
+          - name: DivisionOrderId
+            description: Unique division order number.
+          - name: WellId
+            description: The well the order covers.
+          - name: OwnerId
+            description: The owner the order pays.
+          - name: DecimalInterest
+            description: The owner's share of the well's revenue as a decimal.
+      - name: ap_invoice
+        description: Vendor invoices from the accounting system. Read here only to check the ledger and the netback against the invoices.
+        columns:
+          - name: ApInvoiceId
+            description: Unique invoice row number.
+          - name: WellId
+            description: The well the invoice is charged to.
+          - name: CostCode
+            description: The cost code the invoice is coded to.
+          - name: InvoiceDate
+            description: Invoice date.
+          - name: Amount
+            description: Invoice amount in US dollars.
+      - name: cost_code
+        description: The cost codes invoices are coded to. Read here only to group invoices by category.
+        columns:
+          - name: CostCode
+            description: The cost code, such as LOE100.
+          - name: Category
+            description: LOE, Workover, Tax, G&A or Capital.
+      - name: daily_allocation
+        description: Allocated daily volumes per well from production accounting. Read here only to check netback per BOE.
+        columns:
+          - name: WellId
+            description: The well the volumes are allocated to.
+          - name: ProductionDate
+            description: The production day being allocated.
+          - name: AllocatedOilBbl
+            description: Allocated oil, in barrels.
+          - name: AllocatedGasMcf
+            description: Allocated gas, in thousand cubic feet.
+  - name: volumes
+    description: Tables built by the oilgas (volumes) project.
+    database: "{{ target.database }}"
+    schema: "demo_oilgas_{{ target.name }}"
+    tables:
+      - name: fct_production_monthly
+        identifier: fct_production_monthly
+        description: Field and allocated volumes and BOE per well per calendar month.
+        columns:
+          - name: well_id
+            description: The well.
+          - name: well_name
+            description: Demo well name.
+          - name: field
+            description: Field the well produces from.
+          - name: production_month
+            description: First day of the calendar month.
+          - name: allocated_boe
+            description: Allocated BOE.
+  - name: revenue
+    description: Tables built by the oilgas_revenue project.
+    database: "{{ target.database }}"
+    schema: "demo_oilgas_revenue_{{ target.name }}"
+    tables:
+      - name: fct_well_revenue_monthly
+        identifier: fct_well_revenue_monthly
+        description: Gross (8/8ths) oil and gas revenue per well per month at the Demo prices.
+        columns:
+          - name: well_id
+            description: The well.
+          - name: production_month
+            description: First day of the calendar month.
+          - name: oil_revenue
+            description: Oil revenue, in US dollars.
+          - name: gas_revenue
+            description: Gas revenue, in US dollars.
+          - name: gross_revenue
+            description: Oil plus gas revenue, in US dollars.
+      - name: fct_owner_well_revenue_monthly
+        identifier: fct_owner_well_revenue_monthly
+        description: Revenue paid to each owner from each well per month.
+        columns:
+          - name: owner_id
+            description: The owner paid.
+          - name: well_id
+            description: The well the revenue comes from.
+          - name: production_month
+            description: First day of the production month.
+          - name: total_revenue
+            description: The owner's share of oil plus gas revenue, in US dollars.
+  - name: los
+    description: Tables built by the oilgas_los project.
+    database: "{{ target.database }}"
+    schema: "demo_oilgas_los_{{ target.name }}"
+    tables:
+      - name: fct_los_per_boe
+        identifier: fct_los_per_boe
+        description: LOS cost per BOE per well per month.
+        columns:
+          - name: well_id
+            description: The well.
+          - name: los_month
+            description: First day of the calendar month.
+          - name: loe_cost
+            description: Lease operating expense, in US dollars.
+          - name: workover_cost
+            description: Workover expense, in US dollars.
+          - name: production_tax_cost
+            description: Severance plus ad valorem tax, in US dollars.

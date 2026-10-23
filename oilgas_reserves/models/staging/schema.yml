@@ -1,0 +1,115 @@
+version: 2
+
+models:
+  - name: stg_reserve_runs
+    description: The reserves reports an economics package issued, with snake case names. One row per report. A new report is a new row and old reports never change. Synthetic Demo data.
+    columns:
+      - name: run_id
+        description: Unique report number.
+        tests: [unique, not_null]
+      - name: as_of_date
+        description: The quarter end the reserves are measured at.
+        tests: [unique, not_null]
+      - name: issued_date
+        description: Date the report was issued, 15 days after the as-of date.
+      - name: run_name
+        description: Demo report name.
+      - name: price_deck_name
+        description: Name of the price deck the report assumes.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.
+  - name: stg_price_decks
+    description: The prices each report assumes, with snake case names. One row per report and calendar year. Synthetic Demo data.
+    columns:
+      - name: price_deck_id
+        description: Unique row number.
+        tests: [unique, not_null]
+      - name: run_id
+        description: The report.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_reserve_runs')
+                field: run_id
+      - name: deck_year
+        description: The calendar year the prices apply to.
+      - name: oil_price_usd_bbl
+        description: Oil price in dollars a barrel.
+      - name: gas_price_usd_mcf
+        description: Gas price in dollars an Mcf.
+      - name: oil_differential_usd_bbl
+        description: Amount taken off the oil price for location and quality, in dollars a barrel.
+      - name: gas_differential_usd_mcf
+        description: Amount taken off the gas price for location and quality, in dollars an Mcf.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.
+  - name: stg_well_reserves
+    description: Reserves per report, well and category with snake case names. Volumes are gross, in Mbbl for oil and MMcf for gas. A PUD row is one undrilled location and has no well. Synthetic Demo data.
+    columns:
+      - name: well_reserve_id
+        description: Unique row number.
+        tests: [unique, not_null]
+      - name: run_id
+        description: The report.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_reserve_runs')
+                field: run_id
+      - name: well_id
+        description: The well. Empty on PUD rows.
+      - name: lease_id
+        description: The lease.
+      - name: location_name
+        description: The undrilled location, on PUD rows only.
+      - name: category
+        description: PDP, PDNP or PUD.
+        tests:
+          - accepted_values:
+              arguments:
+                values: [PDP, PDNP, PUD]
+      - name: net_revenue_interest
+        description: Net revenue interest as a decimal.
+      - name: cum_oil_mbbl
+        description: Oil produced to the as-of date, in thousand barrels. PDP rows only.
+      - name: cum_gas_mmcf
+        description: Gas produced to the as-of date, in million cubic feet. PDP rows only.
+      - name: remaining_oil_mbbl
+        description: Remaining oil reserves, in thousand barrels, gross.
+      - name: remaining_gas_mmcf
+        description: Remaining gas reserves, in million cubic feet, gross.
+      - name: eur_oil_mbbl
+        description: Estimated ultimate recovery of oil, in thousand barrels.
+      - name: eur_gas_mmcf
+        description: Estimated ultimate recovery of gas, in million cubic feet.
+      - name: development_capex_usd
+        description: Capital still to spend to bring the reserves on, in US dollars. PDNP and PUD rows only.
+      - name: pv10_usd
+        description: Present value at a 10 percent discount, net to the operator, in US dollars.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.
+  - name: stg_forecast_months
+    description: The monthly production forecast behind each reserve row, with snake case names. 60 months each, on an exponential decline. Synthetic Demo data.
+    columns:
+      - name: forecast_id
+        description: Unique row number.
+        tests: [unique, not_null]
+      - name: well_reserve_id
+        description: The reserve row.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_well_reserves')
+                field: well_reserve_id
+      - name: forecast_month
+        description: First day of the forecast month.
+        tests: [not_null]
+      - name: oil_mbbl
+        description: Forecast oil, in thousand barrels.
+      - name: gas_mmcf
+        description: Forecast gas, in million cubic feet.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.

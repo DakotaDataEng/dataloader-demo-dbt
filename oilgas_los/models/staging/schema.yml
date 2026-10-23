@@ -1,0 +1,76 @@
+version: 2
+
+models:
+  - name: stg_ap_invoices
+    description: The vendor invoices from accounting with snake case names. One row per invoice, one cost code each. Synthetic Demo data.
+    columns:
+      - name: ap_invoice_id
+        description: Unique invoice row number.
+        tests: [unique, not_null]
+      - name: invoice_number
+        description: Invoice number.
+        tests: [unique, not_null]
+      - name: vendor_id
+        description: The vendor that billed.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_vendors')
+                field: vendor_id
+      - name: well_id
+        description: The well the invoice is charged to. Empty for G&A.
+      - name: lease_id
+        description: The lease the invoice is charged to. Empty for G&A.
+      - name: afe_id
+        description: The AFE a capital invoice is charged to. Empty for other invoices.
+      - name: cost_code
+        description: The cost code the invoice is coded to.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_cost_codes')
+                field: cost_code
+      - name: invoice_date
+        description: Invoice date.
+      - name: amount
+        description: Invoice amount in US dollars, gross (8/8ths).
+      - name: status
+        description: Approved or Paid. An invoice turns Paid at 30 days.
+        tests:
+          - accepted_values:
+              arguments:
+                values: [Approved, Paid]
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.
+  - name: stg_cost_codes
+    description: The cost codes invoices are coded to, with snake case names. One row per code. Synthetic Demo data.
+    columns:
+      - name: cost_code
+        description: The cost code, such as LOE100.
+        tests: [unique, not_null]
+      - name: description
+        description: What the code covers.
+      - name: category
+        description: LOE, Workover, Tax, G&A or Capital.
+        tests:
+          - accepted_values:
+              arguments:
+                values: [LOE, Workover, Tax, G&A, Capital]
+      - name: account_id
+        description: The ledger account the code posts to.
+      - name: default_vendor_id
+        description: The vendor usually billing this code.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.
+  - name: stg_vendors
+    description: The vendors that bill the operator, with snake case names. One row per vendor. Synthetic Demo data.
+    columns:
+      - name: vendor_id
+        description: Unique vendor number.
+        tests: [unique, not_null]
+      - name: vendor_name
+        description: Demo vendor name.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.

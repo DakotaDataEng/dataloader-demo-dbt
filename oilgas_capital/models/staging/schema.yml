@@ -1,0 +1,93 @@
+version: 2
+
+models:
+  - name: stg_afes
+    description: The authorizations for expenditure with snake case names. One row per AFE. Synthetic Demo data.
+    columns:
+      - name: afe_id
+        description: Unique AFE row number.
+        tests: [unique, not_null]
+      - name: afe_number
+        description: The AFE number people quote.
+        tests: [unique, not_null]
+      - name: well_id
+        description: The well the AFE spends on.
+        tests: [not_null]
+      - name: lease_id
+        description: The lease the well sits on.
+      - name: afe_type
+        description: Infill drill and complete, Recompletion, Facilities upgrade or Artificial lift conversion.
+      - name: description
+        description: What the AFE approves.
+      - name: approved_date
+        description: Date the AFE was approved.
+      - name: status
+        description: Open or Closed. An AFE closes once every line has reached its final amount.
+        tests:
+          - accepted_values:
+              arguments:
+                values: [Open, Closed]
+      - name: closed_date
+        description: Date the AFE closed. Empty while open.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.
+  - name: stg_afe_lines
+    description: The estimate and actual cost of each AFE by capital cost code, with snake case names. One row per AFE and cost code. Synthetic Demo data.
+    columns:
+      - name: afe_line_id
+        description: Unique AFE line number.
+        tests: [unique, not_null]
+      - name: afe_id
+        description: The AFE.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_afes')
+                field: afe_id
+      - name: cost_code
+        description: The capital cost code (CAP100 to CAP400).
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_capital_cost_codes')
+                field: cost_code
+      - name: estimated_amount
+        description: The approved estimate, in US dollars.
+      - name: actual_amount
+        description: Capital invoices charged so far, in US dollars.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.
+  - name: stg_capital_invoices
+    description: The vendor invoices coded to a capital cost code, with snake case names. Synthetic Demo data.
+    columns:
+      - name: ap_invoice_id
+        description: Unique invoice row number.
+        tests: [unique, not_null]
+      - name: vendor_id
+        description: The vendor that billed.
+      - name: well_id
+        description: The well the invoice is charged to.
+      - name: lease_id
+        description: The lease the invoice is charged to.
+      - name: afe_id
+        description: The AFE the invoice is charged to.
+        tests: [not_null]
+      - name: cost_code
+        description: The capital cost code.
+      - name: invoice_date
+        description: Invoice date.
+      - name: amount
+        description: Invoice amount in US dollars.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.
+  - name: stg_capital_cost_codes
+    description: The capital cost codes, CAP100 drilling, CAP200 completion, CAP300 facilities and equipment and CAP400 gathering and pipeline tie-in. Synthetic Demo data.
+    columns:
+      - name: cost_code
+        description: The capital cost code.
+        tests: [unique, not_null]
+      - name: description
+        description: What the code covers.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.

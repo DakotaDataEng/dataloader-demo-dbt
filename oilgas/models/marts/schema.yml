@@ -1,0 +1,102 @@
+version: 2
+
+models:
+  - name: fct_production
+    description: Allocated oil, gas and water per well per production day, with the well's name and field. Synthetic Demo data.
+    columns:
+      - name: allocation_id
+        description: Unique allocation number.
+        tests: [unique, not_null]
+      - name: well_id
+        description: The well the volumes are allocated to.
+      - name: api_number
+        description: API well number. Demo numbers start at 42-000-00001.
+      - name: well_name
+        description: Demo well name.
+      - name: field
+        description: Field the well produces from.
+      - name: production_date
+        description: The production day being allocated.
+      - name: allocated_oil_bbl
+        description: Allocated oil, in barrels.
+      - name: allocated_gas_mcf
+        description: Allocated gas, in thousand cubic feet.
+      - name: allocated_water_bbl
+        description: Allocated water, in barrels.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.
+  - name: dim_well
+    description: One row per well with its operator, field, first and last production day and the days it produced. Other families read it for well names. Synthetic Demo data.
+    columns:
+      - name: well_id
+        description: Unique well number.
+        tests: [unique, not_null]
+      - name: api_number
+        description: API well number. Demo numbers start at 42-000-00001.
+      - name: well_name
+        description: Demo well name.
+      - name: operator
+        description: Company that operates the well.
+      - name: field
+        description: Field the well produces from.
+      - name: spud_date
+        description: Date drilling began.
+      - name: status
+        description: Well status, such as Producing.
+      - name: first_production_date
+        description: First production day the model holds for the well.
+      - name: last_production_date
+        description: Latest production day the model holds for the well.
+      - name: producing_days
+        description: Number of production days held for the well.
+  - name: fct_production_monthly
+    description: Field and allocated volumes and BOE per well per calendar month. LOS, revenue, land, reserves and financial families read it. Synthetic Demo data.
+    columns:
+      - name: well_id
+        description: The well.
+        tests: [not_null]
+      - name: well_name
+        description: Demo well name.
+      - name: operator
+        description: Company that operates the well.
+      - name: field
+        description: Field the well produces from.
+      - name: production_month
+        description: First day of the calendar month.
+        tests: [not_null]
+      - name: days_produced
+        description: Production days held in the month. A month at the start or end of the history can be partial.
+      - name: field_oil_bbl
+        description: Oil measured in the field, in barrels.
+      - name: field_gas_mcf
+        description: Gas measured in the field, in thousand cubic feet.
+      - name: allocated_oil_bbl
+        description: Allocated oil, in barrels.
+      - name: allocated_gas_mcf
+        description: Allocated gas, in thousand cubic feet.
+      - name: allocated_water_bbl
+        description: Allocated water, in barrels.
+      - name: field_boe
+        description: Field oil plus field gas at 6 Mcf per barrel.
+      - name: allocated_boe
+        description: Allocated oil plus allocated gas at 6 Mcf per barrel. LOS per BOE, netback and revenue use this.
+  - name: fct_allocation_variance
+    description: Field BOE against allocated BOE per well per month, and the difference. Shows where production accounting moved volumes from what the field captured. Synthetic Demo data.
+    columns:
+      - name: well_id
+        description: The well.
+        tests: [not_null]
+      - name: well_name
+        description: Demo well name.
+      - name: field
+        description: Field the well produces from.
+      - name: production_month
+        description: First day of the calendar month.
+      - name: field_boe
+        description: Field oil plus field gas at 6 Mcf per barrel.
+      - name: allocated_boe
+        description: Allocated oil plus allocated gas at 6 Mcf per barrel.
+      - name: boe_variance
+        description: Allocated BOE less field BOE.
+      - name: boe_variance_rate
+        description: Variance as a share of field BOE. Empty when the field BOE is zero.

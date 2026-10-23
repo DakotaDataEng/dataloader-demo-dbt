@@ -1,0 +1,166 @@
+version: 2
+
+models:
+  - name: fct_well_reserves
+    description: Reserves per report, well or location and category, with remaining volumes, EUR, development capital and PV10. Synthetic Demo data.
+    columns:
+      - name: well_reserve_id
+        description: Unique row number.
+        tests: [unique, not_null]
+      - name: run_id
+        description: The report.
+      - name: as_of_date
+        description: The quarter end the reserves are measured at.
+      - name: category
+        description: PDP, PDNP or PUD.
+      - name: well_id
+        description: The well. Empty on PUD rows.
+      - name: lease_id
+        description: The lease.
+      - name: reserve_name
+        description: The well name, or the location name on PUD rows.
+      - name: field
+        description: Field the well produces from. Empty on PUD rows.
+      - name: net_revenue_interest
+        description: Net revenue interest as a decimal.
+      - name: cum_oil_mbbl
+        description: Oil produced to the as-of date, in thousand barrels. PDP rows only.
+      - name: cum_gas_mmcf
+        description: Gas produced to the as-of date, in million cubic feet. PDP rows only.
+      - name: remaining_oil_mbbl
+        description: Remaining oil reserves, in thousand barrels, gross.
+      - name: remaining_gas_mmcf
+        description: Remaining gas reserves, in million cubic feet, gross.
+      - name: remaining_mboe
+        description: Remaining oil plus remaining gas divided by 6, in thousand barrels of oil equivalent.
+      - name: eur_oil_mbbl
+        description: Estimated ultimate recovery of oil, in thousand barrels.
+      - name: eur_gas_mmcf
+        description: Estimated ultimate recovery of gas, in million cubic feet.
+      - name: eur_mboe
+        description: EUR oil plus EUR gas divided by 6, in thousand barrels of oil equivalent.
+      - name: development_capex_usd
+        description: Capital still to spend to bring the reserves on, in US dollars.
+      - name: pv10_usd
+        description: Present value at a 10 percent discount, net to the operator, in US dollars.
+      - name: is_latest_run
+        description: True on the most recent report.
+  - name: fct_reserves_by_category
+    description: Reserves per report and category (PDP, PDNP, PUD) with remaining volumes, EUR, development capital and PV10. The headline reserves table. Synthetic Demo data.
+    columns:
+      - name: category_key
+        description: Unique key made from the report and category.
+        tests: [unique, not_null]
+      - name: run_id
+        description: The report.
+      - name: as_of_date
+        description: The quarter end the reserves are measured at.
+      - name: run_name
+        description: Demo report name.
+      - name: category
+        description: PDP, PDNP or PUD.
+      - name: reserve_row_count
+        description: Wells or locations in the category.
+      - name: remaining_oil_mbbl
+        description: Remaining oil reserves, in thousand barrels, gross.
+      - name: remaining_gas_mmcf
+        description: Remaining gas reserves, in million cubic feet, gross.
+      - name: remaining_mboe
+        description: Remaining reserves in thousand barrels of oil equivalent.
+      - name: eur_mboe
+        description: Estimated ultimate recovery in thousand barrels of oil equivalent.
+      - name: development_capex_usd
+        description: Capital still to spend to bring the reserves on, in US dollars.
+      - name: pv10_usd
+        description: Present value at a 10 percent discount, net to the operator, in US dollars.
+      - name: is_latest_run
+        description: True on the most recent report.
+  - name: fct_reserves_vs_actuals
+    description: Forecast against actual production per report, well and month, for the months where actual volumes exist. The actual comes from the volumes project, which traces back to field data capture. The first and last months of the history can be partial, so check is_full_month. Synthetic Demo data.
+    columns:
+      - name: comparison_key
+        description: Unique key made from the report, well and month.
+        tests: [unique, not_null]
+      - name: run_id
+        description: The report whose forecast is compared.
+      - name: as_of_date
+        description: The quarter end the reserves are measured at.
+      - name: well_id
+        description: The well.
+        tests: [not_null]
+      - name: reserve_name
+        description: Demo well name.
+      - name: category
+        description: PDP or PDNP. PUD locations have no wells to compare.
+      - name: forecast_month
+        description: First day of the compared month.
+      - name: days_produced
+        description: Production days held in the month, from the volumes project.
+      - name: days_in_month
+        description: Calendar days in the month.
+      - name: is_full_month
+        description: True when every day of the month has volumes.
+      - name: forecast_oil_mbbl
+        description: Forecast oil, in thousand barrels.
+      - name: actual_oil_mbbl
+        description: Allocated oil, in thousand barrels.
+      - name: oil_variance_mbbl
+        description: Actual less forecast oil, in thousand barrels.
+      - name: oil_variance_rate
+        description: Oil variance as a share of the forecast.
+      - name: forecast_mboe
+        description: Forecast in thousand barrels of oil equivalent.
+      - name: actual_mboe
+        description: Allocated volumes in thousand barrels of oil equivalent.
+      - name: mboe_variance
+        description: Actual less forecast, in thousand barrels of oil equivalent.
+  - name: fct_reserves_run_change
+    description: How each category moved from one report to the next, in remaining Mboe and PV10. The first report has no earlier one, so its change columns are empty. Synthetic Demo data.
+    columns:
+      - name: category_key
+        description: Unique key made from the report and category.
+        tests: [unique, not_null]
+      - name: run_id
+        description: The report.
+      - name: as_of_date
+        description: The quarter end the reserves are measured at.
+      - name: category
+        description: PDP, PDNP or PUD.
+      - name: remaining_mboe
+        description: Remaining reserves in thousand barrels of oil equivalent.
+      - name: prior_remaining_mboe
+        description: Remaining reserves in the report before.
+      - name: remaining_mboe_change
+        description: Remaining Mboe less the report before.
+      - name: pv10_usd
+        description: PV10 in US dollars.
+      - name: prior_pv10_usd
+        description: PV10 in the report before.
+      - name: pv10_usd_change
+        description: PV10 less the report before, in US dollars.
+  - name: fct_price_deck
+    description: The price deck of each report by calendar year, with the realized price after the differential. Synthetic Demo data.
+    columns:
+      - name: price_deck_id
+        description: Unique row number.
+        tests: [unique, not_null]
+      - name: run_id
+        description: The report.
+      - name: as_of_date
+        description: The quarter end the reserves are measured at.
+      - name: price_deck_name
+        description: Name of the price deck.
+      - name: deck_year
+        description: The calendar year the prices apply to.
+      - name: oil_price_usd_bbl
+        description: Oil price in dollars a barrel.
+      - name: oil_differential_usd_bbl
+        description: Amount taken off the oil price, in dollars a barrel.
+      - name: oil_realized_usd_bbl
+        description: Oil price less the differential.
+      - name: gas_price_usd_mcf
+        description: Gas price in dollars an Mcf.
+      - name: gas_differential_usd_mcf
+        description: Amount taken off the gas price, in dollars an Mcf.
+      - name: gas_realized_usd_mcf
+        description: Gas price less the differential.

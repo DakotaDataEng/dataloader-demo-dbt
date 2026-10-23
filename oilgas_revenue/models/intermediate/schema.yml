@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: int_well_month_value
+    description: The gross value of each well's allocated volumes per month at the flat Demo prices, not rounded. Prices are the dbt vars demo_oil_price_usd_bbl and demo_gas_price_usd_mcf. Synthetic Demo data.
+    columns:
+      - name: well_id
+        description: The well.
+        tests: [not_null]
+      - name: well_name
+        description: Demo well name.
+      - name: field
+        description: Field the well produces from.
+      - name: production_month
+        description: First day of the calendar month.
+        tests: [not_null]
+      - name: allocated_oil_bbl
+        description: Allocated oil, in barrels.
+      - name: allocated_gas_mcf
+        description: Allocated gas, in thousand cubic feet.
+      - name: allocated_boe
+        description: Allocated oil plus allocated gas at 6 Mcf per barrel.
+      - name: oil_price_usd_bbl
+        description: Demo oil price, in dollars a barrel.
+      - name: gas_price_usd_mcf
+        description: Demo gas price, in dollars an Mcf.
+      - name: oil_value
+        description: Allocated oil times the Demo oil price, not rounded.
+      - name: gas_value
+        description: Allocated gas times the Demo gas price, not rounded.
+  - name: int_owner_well_month
+    description: Each owner's share of each well's value per month, from the division order's decimal interest, not rounded. Synthetic Demo data.
+    columns:
+      - name: owner_id
+        description: The owner.
+        tests: [not_null]
+      - name: well_id
+        description: The well.
+        tests: [not_null]
+      - name: production_month
+        description: First day of the calendar month.
+      - name: decimal_interest
+        description: The owner's share of the well's revenue as a decimal.
+      - name: owner_oil_revenue
+        description: The owner's share of the well's oil value, not rounded.
+      - name: owner_gas_revenue
+        description: The owner's share of the well's gas value, not rounded.

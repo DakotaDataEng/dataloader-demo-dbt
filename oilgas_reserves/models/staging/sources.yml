@@ -1,0 +1,124 @@
+version: 2
+
+sources:
+  - name: og_raw
+    description: Demo oil and gas raw tables loaded by DataLoader. They keep the source's column names. Synthetic Demo data only.
+    schema: "demo_og_raw_{{ target.name }}"
+    tables:
+      - name: reserve_run
+        description: One row per reserves report an economics package issued. A new report is a new row and old ones never change.
+        columns:
+          - name: RunId
+            description: Unique report number.
+          - name: AsOfDate
+            description: The quarter end the reserves are measured at.
+          - name: IssuedDate
+            description: Date the report was issued, 15 days after the as-of date.
+          - name: RunName
+            description: Demo report name.
+          - name: PriceDeckName
+            description: Name of the price deck the report assumes.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: price_deck
+        description: The prices a report assumes, one row per report and calendar year.
+        columns:
+          - name: PriceDeckId
+            description: Unique row number.
+          - name: RunId
+            description: The report.
+          - name: DeckYear
+            description: The calendar year the prices apply to.
+          - name: OilPriceUsdBbl
+            description: Oil price in dollars a barrel.
+          - name: GasPriceUsdMcf
+            description: Gas price in dollars an Mcf.
+          - name: OilDifferentialUsdBbl
+            description: Amount taken off the oil price for location and quality, in dollars a barrel.
+          - name: GasDifferentialUsdMcf
+            description: Amount taken off the gas price for location and quality, in dollars an Mcf.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: well_reserve
+        description: Reserves per report, well and category. A PUD row is one undrilled location and has no well.
+        columns:
+          - name: WellReserveId
+            description: Unique row number.
+          - name: RunId
+            description: The report.
+          - name: WellId
+            description: The well. Empty on PUD rows.
+          - name: LeaseId
+            description: The lease.
+          - name: LocationName
+            description: The undrilled location, on PUD rows only.
+          - name: Category
+            description: PDP, PDNP or PUD.
+          - name: NetRevenueInterest
+            description: Net revenue interest as a decimal.
+          - name: CumOilMbbl
+            description: Oil produced to the as-of date, in thousand barrels. PDP rows only.
+          - name: CumGasMmcf
+            description: Gas produced to the as-of date, in million cubic feet. PDP rows only.
+          - name: RemainingOilMbbl
+            description: Remaining oil reserves, in thousand barrels, gross.
+          - name: RemainingGasMmcf
+            description: Remaining gas reserves, in million cubic feet, gross.
+          - name: EurOilMbbl
+            description: Estimated ultimate recovery of oil, in thousand barrels.
+          - name: EurGasMmcf
+            description: Estimated ultimate recovery of gas, in million cubic feet.
+          - name: DevelopmentCapexUsd
+            description: Capital still to spend to bring the reserves on, in US dollars.
+          - name: Pv10Usd
+            description: Present value at a 10 percent discount, net to the operator, in US dollars.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: forecast_month
+        description: The monthly production forecast behind each reserve row. 60 months each.
+        columns:
+          - name: ForecastId
+            description: Unique row number.
+          - name: WellReserveId
+            description: The reserve row.
+          - name: ForecastMonth
+            description: First day of the forecast month.
+          - name: OilMbbl
+            description: Forecast oil, in thousand barrels.
+          - name: GasMmcf
+            description: Forecast gas, in million cubic feet.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+  - name: volumes
+    description: Tables built by the oilgas (volumes) project, read here so reserves are held against the same actual volumes as everyone else.
+    database: "{{ target.database }}"
+    schema: "demo_oilgas_{{ target.name }}"
+    tables:
+      - name: dim_well
+        identifier: dim_well
+        description: One row per well with its operator and field.
+        columns:
+          - name: well_id
+            description: Unique well number.
+          - name: well_name
+            description: Demo well name.
+          - name: operator
+            description: Company that operates the well.
+          - name: field
+            description: Field the well produces from.
+      - name: fct_production_monthly
+        identifier: fct_production_monthly
+        description: Field and allocated volumes and BOE per well per calendar month.
+        columns:
+          - name: well_id
+            description: The well.
+          - name: production_month
+            description: First day of the calendar month.
+          - name: days_produced
+            description: Production days held in the month.
+          - name: allocated_oil_bbl
+            description: Allocated oil, in barrels.
+          - name: allocated_gas_mcf
+            description: Allocated gas, in thousand cubic feet.
+          - name: allocated_boe
+            description: Allocated BOE.

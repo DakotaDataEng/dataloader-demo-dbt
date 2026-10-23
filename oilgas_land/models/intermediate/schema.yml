@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: int_lease_wells
+    description: One row per well with the lease it sits on and the lease's terms. The lease comes from the well to lease link, not from the well number. Synthetic Demo data.
+    columns:
+      - name: well_id
+        description: The well.
+        tests: [unique, not_null]
+      - name: well_name
+        description: Demo well name, from the volumes project.
+      - name: field
+        description: Field the well produces from, from the volumes project.
+      - name: lease_id
+        description: The lease the well sits on.
+        tests: [not_null]
+      - name: lease_name
+        description: Demo lease name.
+      - name: county
+        description: County the lease is in.
+      - name: acres
+        description: Lease size in acres.
+      - name: effective_date
+        description: Date the lease took effect.
+      - name: expiry_date
+        description: Date the lease expires unless held.
+      - name: cost_center
+        description: The accounting code the well is charged to.

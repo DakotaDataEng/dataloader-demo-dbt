@@ -1,0 +1,90 @@
+version: 2
+
+sources:
+  - name: og_raw
+    description: Demo oil and gas raw tables loaded by DataLoader. They keep the source's column names. Synthetic Demo data only.
+    schema: "demo_og_raw_{{ target.name }}"
+    tables:
+      - name: lease
+        description: The land agreements wells sit on, from the land system. One row per lease.
+        columns:
+          - name: LeaseId
+            description: Unique lease number.
+          - name: LeaseName
+            description: Demo lease name.
+          - name: County
+            description: County the lease is in.
+          - name: Acres
+            description: Lease size in acres.
+          - name: EffectiveDate
+            description: Date the lease took effect.
+          - name: ExpiryDate
+            description: Date the lease expires unless held.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: lease_interest
+        description: Each owner's decimal interest in a lease. The interests of one lease add up to 1.
+        columns:
+          - name: LeaseInterestId
+            description: Unique row number.
+          - name: LeaseId
+            description: The lease.
+          - name: OwnerId
+            description: The owner.
+          - name: DecimalInterest
+            description: The owner's share of the lease as a decimal.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: owner
+        description: Mineral owners and companies in the land system. One row per owner.
+        columns:
+          - name: OwnerId
+            description: Unique owner number.
+          - name: OwnerName
+            description: Demo owner name.
+          - name: OwnerType
+            description: Individual, Trust or Company.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: well_lease
+        description: Which lease each well sits on, kept by accounting because field capture has no lease column. One row per well.
+        columns:
+          - name: WellId
+            description: The well.
+          - name: LeaseId
+            description: The lease the well sits on.
+          - name: CostCenter
+            description: The accounting code the well is charged to.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+  - name: volumes
+    description: Tables built by the oilgas (volumes) project, read here so land and volume numbers agree.
+    database: "{{ target.database }}"
+    schema: "demo_oilgas_{{ target.name }}"
+    tables:
+      - name: dim_well
+        identifier: dim_well
+        description: One row per well with its operator, field and production days.
+        columns:
+          - name: well_id
+            description: Unique well number.
+          - name: well_name
+            description: Demo well name.
+          - name: field
+            description: Field the well produces from.
+      - name: fct_production_monthly
+        identifier: fct_production_monthly
+        description: Field and allocated volumes and BOE per well per calendar month.
+        columns:
+          - name: well_id
+            description: The well.
+          - name: production_month
+            description: First day of the calendar month.
+          - name: days_produced
+            description: Production days held in the month.
+          - name: allocated_oil_bbl
+            description: Allocated oil, in barrels.
+          - name: allocated_gas_mcf
+            description: Allocated gas, in thousand cubic feet.
+          - name: allocated_boe
+            description: Allocated BOE.

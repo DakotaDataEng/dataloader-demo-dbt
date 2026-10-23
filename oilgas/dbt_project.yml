@@ -3,8 +3,14 @@ version: '1.0.0'
 config-version: 2
 profile: dataloader
 model-paths: [models]
+test-paths: [tests]
 
 models:
   demo_oilgas:
-    +materialized: table
-    +tags: [demo, oilgas, nightly]
+    +tags: [demo, oilgas, volumes, nightly]
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table

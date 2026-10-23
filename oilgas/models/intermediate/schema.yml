@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: int_well_days
+    description: One row per well per production day, with field volumes next to allocated volumes and the BOE of each. BOE is oil plus gas at 6 Mcf per barrel. Synthetic Demo data.
+    columns:
+      - name: well_id
+        description: The well.
+        tests: [not_null]
+      - name: production_date
+        description: The production day.
+        tests: [not_null]
+      - name: field_oil_bbl
+        description: Oil measured in the field, in barrels.
+      - name: field_gas_mcf
+        description: Gas measured in the field, in thousand cubic feet.
+      - name: field_water_bbl
+        description: Water measured in the field, in barrels.
+      - name: allocated_oil_bbl
+        description: Oil allocated by production accounting, in barrels.
+      - name: allocated_gas_mcf
+        description: Gas allocated by production accounting, in thousand cubic feet.
+      - name: allocated_water_bbl
+        description: Water allocated by production accounting, in barrels.
+      - name: field_boe
+        description: Field oil plus field gas at 6 Mcf per barrel, in barrels of oil equivalent.
+      - name: allocated_boe
+        description: Allocated oil plus allocated gas at 6 Mcf per barrel, in barrels of oil equivalent.

@@ -1,0 +1,71 @@
+version: 2
+
+models:
+  - name: fct_los_monthly
+    description: The lease operating statement. Cost per well, month and LOS line (cost code), with the invoice count. G&A has no well, so its rows have no well_id. Synthetic Demo data.
+    columns:
+      - name: los_key
+        description: Unique key made from the well, month and cost code.
+        tests: [unique, not_null]
+      - name: well_id
+        description: The well. Empty for G&A.
+      - name: los_month
+        description: First day of the month the cost belongs to. Production taxes sit in the month they tax.
+        tests: [not_null]
+      - name: cost_code
+        description: The cost code, which is the LOS line.
+      - name: los_line
+        description: What the cost code covers, such as chemicals or severance tax.
+      - name: category
+        description: LOE, Workover, Tax or G&A.
+      - name: invoice_count
+        description: Invoices behind the amount.
+      - name: amount
+        description: Cost in US dollars, gross (8/8ths).
+  - name: fct_los_per_boe
+    description: LOS cost per BOE per well per month, with LOE, workover and production taxes. Reads the volumes project for BOE. Taxes post a month late, so the latest month has none yet. Synthetic Demo data.
+    columns:
+      - name: well_id
+        description: The well.
+        tests: [not_null]
+      - name: well_name
+        description: Demo well name.
+      - name: field
+        description: Field the well produces from.
+      - name: los_month
+        description: First day of the calendar month.
+        tests: [not_null]
+      - name: allocated_boe
+        description: Allocated oil plus allocated gas at 6 Mcf per barrel, from the volumes project.
+      - name: loe_cost
+        description: Lease operating expense for the month, in US dollars.
+      - name: workover_cost
+        description: Workover expense for the month, in US dollars.
+      - name: production_tax_cost
+        description: Severance plus ad valorem tax for the month, in US dollars.
+      - name: total_los_cost
+        description: LOE plus workover plus production taxes.
+      - name: loe_per_boe
+        description: LOE divided by BOE. Empty when there is no BOE.
+      - name: los_per_boe
+        description: Total LOS cost divided by BOE. Empty when there is no BOE.
+  - name: fct_los_summary_monthly
+    description: The whole operator's lease operating statement per month, with G&A, and LOS per BOE on all volumes. Synthetic Demo data.
+    columns:
+      - name: los_month
+        description: First day of the calendar month.
+        tests: [unique, not_null]
+      - name: allocated_boe
+        description: Allocated BOE for all wells, from the volumes project.
+      - name: loe_cost
+        description: Lease operating expense, in US dollars.
+      - name: workover_cost
+        description: Workover expense, in US dollars.
+      - name: production_tax_cost
+        description: Severance plus ad valorem tax, in US dollars.
+      - name: ga_cost
+        description: G&A overhead, in US dollars.
+      - name: total_los_cost
+        description: LOE plus workover plus production taxes plus G&A.
+      - name: los_per_boe
+        description: Total LOS cost divided by BOE. Empty when there is no BOE.
