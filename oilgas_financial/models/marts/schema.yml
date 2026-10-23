@@ -1,0 +1,99 @@
+version: 2
+
+models:
+  - name: fct_trial_balance
+    description: The trial balance. Debits, credits and net per ledger account per posting month. The net of all accounts is zero. Synthetic Demo data.
+    columns:
+      - name: balance_key
+        description: Unique key made from the account number and month.
+        tests: [unique, not_null]
+      - name: account_number
+        description: The account number.
+      - name: account_name
+        description: Demo account name.
+      - name: account_type
+        description: Asset, Liability, Equity, Revenue or Expense.
+      - name: posting_month
+        description: First day of the posting month.
+      - name: line_count
+        description: Ledger lines in the month.
+      - name: debit
+        description: Total debits, in US dollars.
+      - name: credit
+        description: Total credits, in US dollars.
+      - name: net_amount
+        description: Debits less credits, in US dollars.
+  - name: fct_jib_by_partner
+    description: What the operator billed each non-operating partner per cost month, with gross cost, billed amount and the share billed. Synthetic Demo data.
+    columns:
+      - name: jib_key
+        description: Unique key made from the partner and month.
+        tests: [unique, not_null]
+      - name: partner_id
+        description: The non-operating partner billed.
+      - name: partner_name
+        description: Demo partner name.
+      - name: billing_month
+        description: First day of the cost month billed.
+      - name: billing_date
+        description: Date the bills were issued.
+      - name: well_count
+        description: Wells billed to the partner.
+      - name: gross_cost
+        description: LOE, workover and capital on the billed wells, in US dollars.
+      - name: billed_amount
+        description: Gross cost times working interest, in US dollars.
+      - name: billed_share
+        description: Billed amount divided by gross cost. It is the partner's working interest.
+  - name: fct_netback_monthly
+    description: Operating netback per well per month, which is gross revenue less LOE, workover and production taxes, and the same per BOE. Reads the revenue, LOS and volumes projects. G&A is not in a well's netback. The latest month has no taxes yet because they post a month late. Synthetic Demo data.
+    columns:
+      - name: well_id
+        description: The well.
+        tests: [not_null]
+      - name: well_name
+        description: Demo well name.
+      - name: field
+        description: Field the well produces from.
+      - name: production_month
+        description: First day of the calendar month.
+        tests: [not_null]
+      - name: allocated_boe
+        description: Allocated oil plus allocated gas at 6 Mcf per barrel, from the volumes project.
+      - name: gross_revenue
+        description: Gross (8/8ths) oil and gas revenue at the Demo prices, from the revenue project.
+      - name: loe_cost
+        description: Lease operating expense, from the LOS project.
+      - name: workover_cost
+        description: Workover expense, from the LOS project.
+      - name: production_tax_cost
+        description: Severance plus ad valorem tax, from the LOS project.
+      - name: netback
+        description: Gross revenue less LOE, workover and production taxes, in US dollars.
+      - name: revenue_per_boe
+        description: Gross revenue divided by BOE.
+      - name: los_per_boe
+        description: LOE plus workover plus production taxes, divided by BOE.
+      - name: netback_per_boe
+        description: Netback divided by BOE. It equals revenue per BOE less LOS per BOE.
+  - name: fct_netback_by_field_monthly
+    description: Netback per field per month, added up from the wells, with netback per BOE on the field's volumes. Synthetic Demo data.
+    columns:
+      - name: field
+        description: Field the wells produce from.
+        tests: [not_null]
+      - name: production_month
+        description: First day of the calendar month.
+        tests: [not_null]
+      - name: well_count
+        description: Wells in the field with volumes in the month.
+      - name: allocated_boe
+        description: Allocated BOE for the field.
+      - name: gross_revenue
+        description: Gross oil and gas revenue, in US dollars.
+      - name: total_los_cost
+        description: LOE plus workover plus production taxes, in US dollars.
+      - name: netback
+        description: Gross revenue less LOS cost, in US dollars.
+      - name: netback_per_boe
+        description: Netback divided by BOE.

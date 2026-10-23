@@ -1,0 +1,64 @@
+version: 2
+
+models:
+  - name: int_gl_lines
+    description: Every ledger line with its account and posting month, and the net of debit less credit. Synthetic Demo data.
+    columns:
+      - name: gl_entry_id
+        description: Unique ledger line number.
+        tests: [unique, not_null]
+      - name: journal_id
+        description: The journal the line belongs to.
+      - name: posting_date
+        description: Date the line posted.
+      - name: posting_month
+        description: First day of the posting month.
+      - name: account_id
+        description: The ledger account.
+      - name: account_number
+        description: The account number.
+      - name: account_name
+        description: Demo account name.
+      - name: account_type
+        description: Asset, Liability, Equity, Revenue or Expense.
+      - name: well_id
+        description: The well the line is charged to, when there is one.
+      - name: lease_id
+        description: The lease the line is charged to, when there is one.
+      - name: cost_code
+        description: The cost code, on invoice lines.
+      - name: debit
+        description: Debit amount in US dollars.
+      - name: credit
+        description: Credit amount in US dollars.
+      - name: net_amount
+        description: Debit less credit.
+      - name: source_type
+        description: AP for an invoice or JIB for a joint interest bill.
+      - name: source_id
+        description: The invoice or bill the line came from.
+  - name: int_journals
+    description: One row per journal, the pair of ledger lines an invoice or a joint interest bill posts, with its debit and credit totals. A journal balances when they are equal. Synthetic Demo data.
+    columns:
+      - name: journal_id
+        description: Unique journal number.
+        tests: [unique, not_null]
+      - name: posting_date
+        description: Date the journal posted.
+      - name: source_type
+        description: AP for an invoice or JIB for a joint interest bill.
+      - name: source_id
+        description: The invoice or bill the journal came from.
+      - name: line_count
+        description: Ledger lines in the journal. It is 2.
+      - name: debit
+        description: Total debits, in US dollars.
+      - name: credit
+        description: Total credits, in US dollars.
+      - name: is_balanced
+        description: True when debits equal credits.
+        tests:
+          - accepted_values:
+              arguments:
+                values: [true]
+                quote: false
