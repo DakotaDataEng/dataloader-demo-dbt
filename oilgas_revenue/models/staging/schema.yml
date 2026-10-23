@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: stg_division_orders
+    description: The division orders that set each owner's decimal interest in a well, with snake case names. One row per well and owner. Synthetic Demo data.
+    columns:
+      - name: division_order_id
+        description: Unique division order number.
+        tests: [unique, not_null]
+      - name: well_id
+        description: The well the order covers.
+        tests: [not_null]
+      - name: owner_id
+        description: The owner the order pays.
+        tests: [not_null]
+      - name: decimal_interest
+        description: The owner's share of the well's revenue as a decimal.
+      - name: effective_date
+        description: Date the order took effect.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.
+  - name: stg_monthly_revenue
+    description: Owner revenue per month as production accounting reports it, with snake case names. One row per owner and month. Synthetic Demo data.
+    columns:
+      - name: monthly_revenue_id
+        description: Unique row number.
+        tests: [unique, not_null]
+      - name: owner_id
+        description: The owner paid.
+        tests: [not_null]
+      - name: revenue_month
+        description: First day of the revenue month.
+        tests: [not_null]
+      - name: oil_revenue
+        description: Oil revenue paid to the owner, in US dollars.
+      - name: gas_revenue
+        description: Gas revenue paid to the owner, in US dollars.
+      - name: total_revenue
+        description: Oil plus gas revenue, in US dollars.
+      - name: modified_at
+        description: When the row last changed in the source, in UTC.

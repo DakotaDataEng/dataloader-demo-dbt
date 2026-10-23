@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: fct_well_revenue_monthly
+    description: Gross (8/8ths) oil and gas revenue per well per month at the flat Demo prices, before any owner's share. Netback reads it. Synthetic Demo data.
+    columns:
+      - name: well_id
+        description: The well.
+        tests: [not_null]
+      - name: well_name
+        description: Demo well name.
+      - name: field
+        description: Field the well produces from.
+      - name: production_month
+        description: First day of the calendar month.
+        tests: [not_null]
+      - name: allocated_oil_bbl
+        description: Allocated oil, in barrels.
+      - name: allocated_gas_mcf
+        description: Allocated gas, in thousand cubic feet.
+      - name: allocated_boe
+        description: Allocated oil plus allocated gas at 6 Mcf per barrel.
+      - name: oil_price_usd_bbl
+        description: Demo oil price, in dollars a barrel.
+      - name: gas_price_usd_mcf
+        description: Demo gas price, in dollars an Mcf.
+      - name: oil_revenue
+        description: Oil revenue at the Demo price, in US dollars.
+      - name: gas_revenue
+        description: Gas revenue at the Demo price, in US dollars.
+      - name: gross_revenue
+        description: Oil plus gas revenue, in US dollars.
+  - name: fct_owner_revenue_monthly
+    description: Revenue paid to each owner per month, built from allocated volumes, the Demo prices and the division orders, next to what production accounting reported. A difference other than zero means the two disagree. Synthetic Demo data.
+    columns:
+      - name: owner_id
+        description: The owner paid.
+        tests: [not_null]
+      - name: owner_name
+        description: Demo owner name.
+      - name: owner_type
+        description: Individual, Trust or Company.
+      - name: revenue_month
+        description: First day of the revenue month.
+        tests: [not_null]
+      - name: well_count
+        description: Wells the owner is paid from in the month.
+      - name: oil_revenue
+        description: Oil revenue paid to the owner, in US dollars.
+      - name: gas_revenue
+        description: Gas revenue paid to the owner, in US dollars.
+      - name: total_revenue
+        description: Oil plus gas revenue built here, in US dollars.
+      - name: reported_total_revenue
+        description: Total revenue production accounting reported for the owner and month.
+      - name: difference
+        description: Built total less reported total. Zero when they agree.

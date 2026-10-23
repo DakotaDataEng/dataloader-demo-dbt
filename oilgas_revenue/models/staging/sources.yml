@@ -1,0 +1,77 @@
+version: 2
+
+sources:
+  - name: og_raw
+    description: Demo oil and gas raw tables loaded by DataLoader. They keep the source's column names. Synthetic Demo data only.
+    schema: "demo_og_raw_{{ target.name }}"
+    tables:
+      - name: division_order
+        description: The division orders that set each owner's decimal interest in a well. One row per well and owner.
+        columns:
+          - name: DivisionOrderId
+            description: Unique division order number.
+          - name: WellId
+            description: The well the order covers.
+          - name: OwnerId
+            description: The owner the order pays.
+          - name: DecimalInterest
+            description: The owner's share of the well's revenue as a decimal.
+          - name: EffectiveDate
+            description: Date the order took effect.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+      - name: monthly_revenue
+        description: Owner revenue per month as production accounting reports it. One row per owner and month.
+        columns:
+          - name: MonthlyRevenueId
+            description: Unique row number.
+          - name: OwnerId
+            description: The owner paid.
+          - name: RevenueMonth
+            description: First day of the revenue month.
+          - name: OilRevenue
+            description: Oil revenue paid to the owner, in US dollars.
+          - name: GasRevenue
+            description: Gas revenue paid to the owner, in US dollars.
+          - name: TotalRevenue
+            description: Oil plus gas revenue, in US dollars.
+          - name: ModifiedDate
+            description: When the row last changed in the source, in UTC.
+  - name: volumes
+    description: Tables built by the oilgas (volumes) project, read here so revenue and volume numbers agree.
+    database: "{{ target.database }}"
+    schema: "demo_oilgas_{{ target.name }}"
+    tables:
+      - name: fct_production_monthly
+        identifier: fct_production_monthly
+        description: Field and allocated volumes and BOE per well per calendar month.
+        columns:
+          - name: well_id
+            description: The well.
+          - name: well_name
+            description: Demo well name.
+          - name: field
+            description: Field the well produces from.
+          - name: production_month
+            description: First day of the calendar month.
+          - name: allocated_oil_bbl
+            description: Allocated oil, in barrels.
+          - name: allocated_gas_mcf
+            description: Allocated gas, in thousand cubic feet.
+          - name: allocated_boe
+            description: Allocated BOE.
+  - name: land
+    description: Tables built by the oilgas_land project, read here for owner names.
+    database: "{{ target.database }}"
+    schema: "demo_oilgas_land_{{ target.name }}"
+    tables:
+      - name: dim_owner
+        identifier: dim_owner
+        description: One row per owner with name and type.
+        columns:
+          - name: owner_id
+            description: Unique owner number.
+          - name: owner_name
+            description: Demo owner name.
+          - name: owner_type
+            description: Individual, Trust or Company.
