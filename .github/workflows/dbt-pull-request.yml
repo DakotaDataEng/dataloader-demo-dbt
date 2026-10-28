@@ -1,0 +1,57 @@
+name: dbt pull request
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  check:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DL_URL: https://dataloader.dakotaapps.com
+      PROJECT: 3d8ae4cd-d657-4b19-bc85-f3c46bfd3e04
+      CLIENT_ID: ${{ vars.DL_CI_CLIENT_ID }}
+      AUDIENCE: ${{ vars.DL_OIDC_AUDIENCE }}
+      SHA: ${{ github.event.pull_request.head.sha }}
+      PR: ${{ github.event.pull_request.number }}
+      ACTION: ${{ github.event.action }}
+    steps:
+      - name: Check or clean up PR
+        shell: bash
+        run: |
+          set -euo pipefail
+          id_token=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$(jq -rn --arg a "$AUDIENCE" '$a|@uri')" | jq -er .value)
+          echo "::add-mask::$id_token"
+          token=$(curl -fsS "$DL_URL/api/v1/oauth/token" \
+            --data-urlencode grant_type=client_credentials \
+            --data-urlencode "client_id=$CLIENT_ID" \
+            --data-urlencode client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer \
+            --data-urlencode "client_assertion=$id_token" \
+            --data-urlencode scope=dbt_ci | jq -er .access_token)
+          echo "::add-mask::$token"
+          endpoint="$DL_URL/api/v1/dbt/projects/$PROJECT/ci"
+          if [ "$ACTION" = closed ]; then
+            curl -fsS -X DELETE -H "Authorization: Bearer $token" "$endpoint/pr/$PR"
+            exit 0
+          fi
+          body=$(jq -nc --arg sha "$SHA" --argjson pr "$PR" '{commit_sha:$sha,base:"prod",pr:$pr}')
+          id=$(curl -fsS -H "Authorization: Bearer $token" -H 'Content-Type: application/json' \
+            -d "$body" "$endpoint" | jq -er .id)
+          for attempt in $(seq 1 300); do
+            result=$(curl -fsS -H "Authorization: Bearer $token" "$endpoint/$id")
+            status=$(jq -r .status <<<"$result")
+            case "$status" in
+              passed|failed|cancelled)
+                printf '### dbt CI plan and results\n\n```json\n%s\n```\n' \
+                  "$(jq '{status,plan,results,error,cleanup}' <<<"$result")" >> "$GITHUB_STEP_SUMMARY"
+                [ "$status" = passed ]
+                exit $? ;;
+            esac
+            sleep 5
+          done
+          echo 'CI run did not finish within 25 minutes'
+          exit 1
