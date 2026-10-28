@@ -45,6 +45,8 @@ models:
         description: Merchandise revenue minus merchandise cost.
       - name: units_sold
         description: Units sold that day.
+      - name: largest_order
+        description: Revenue of the day's largest order.
   - name: customer_lifetime_value
     description: One row per customer with their order count, revenue and margin to date. Customers who have never ordered are included with zero totals.
     columns:
