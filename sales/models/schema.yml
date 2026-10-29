@@ -83,3 +83,61 @@ models:
         description: Order total as charged to the customer.
       - name: updated_at
         description: When the order row last changed in the source system.
+  - name: weekly_sales
+    description: Sales for each week, Monday to Sunday, from the daily totals.
+    columns:
+      - name: sales_week
+        description: Monday that starts the week.
+        data_tests: [not_null, unique]
+      - name: order_count
+        description: Orders placed that week.
+      - name: gross_revenue
+        description: Total order revenue for the week.
+      - name: gross_margin
+        description: Merchandise revenue minus merchandise cost for the week.
+      - name: units_sold
+        description: Units sold that week.
+  - name: region_sales
+    description: Sales for each province and channel.
+    columns:
+      - name: region
+        description: Province of the customers who ordered.
+        data_tests: [not_null]
+      - name: channel
+        description: Where the orders were placed, web or store.
+      - name: order_count
+        description: Orders placed.
+      - name: gross_revenue
+        description: Total order revenue.
+      - name: units_sold
+        description: Units sold.
+      - name: average_categories
+        description: Product categories on an average order.
+  - name: customer_segments
+    description: Each customer's spending band, high from 5,000, medium from 1,000, otherwise low.
+    columns:
+      - name: customer_id
+        description: Unique customer number.
+        data_tests: [not_null, unique]
+      - name: demo_name
+        description: Display name of the customer.
+      - name: region
+        description: Province where the customer is based.
+      - name: lifetime_revenue
+        description: Total order revenue to date.
+      - name: segment
+        description: Spending band, high, medium or low.
+  - name: order_events
+    description: The latest state of every order, one row per order. It builds incrementally and adds new columns to the deployed table when the model gains them.
+    columns:
+      - name: order_id
+        description: Unique order number.
+        data_tests: [not_null, unique]
+      - name: customer_id
+        description: The customer who placed the order.
+      - name: status
+        description: Where the order stands, processing, completed or cancelled.
+      - name: total_amount
+        description: Order total as charged to the customer.
+      - name: updated_at
+        description: When the order row last changed in the source system.
