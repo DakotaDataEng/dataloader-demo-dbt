@@ -3,7 +3,6 @@ with line_totals as (
     select
         l.order_id,
         sum(l.line_amount) as merchandise_revenue,
-        sum(l.quantity * l.unit_cost) as merchandise_cost,
         sum(l.quantity) as units_sold,
         count(distinct p.category) as category_count
     from {{ source('demo_raw', 'order_lines') }} l
@@ -18,7 +17,6 @@ select
     c.region,
     o.total_amount as order_revenue,
     coalesce(l.merchandise_revenue, 0) as merchandise_revenue,
-    coalesce(l.merchandise_cost, 0) as merchandise_cost,
     coalesce(l.units_sold, 0) as units_sold,
     coalesce(l.category_count, 0) as category_count
 from {{ source('demo_raw', 'orders') }} o
