@@ -33,6 +33,7 @@ models:
         data_tests: [not_null, unique]
       - name: order_count
         description: Orders placed that day.
+        data_tests: [not_null]
       - name: customer_count
         description: Distinct customers who ordered that day.
       - name: gross_revenue

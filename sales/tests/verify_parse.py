@@ -20,7 +20,7 @@ def main():
     dbt_environment.pop('DBT_ALLOW_EXPERIMENTAL_ADAPTERS', None)
     expected = {
         'sales': ({'order_sales', 'daily_sales', 'customer_lifetime_value', 'recent_orders',
-                   'weekly_sales', 'region_sales', 'customer_segments', 'order_events'}, 17),
+                   'weekly_sales', 'region_sales', 'customer_segments', 'order_events'}, 18),
         'operations': ({'stock_levels', 'late_shipment_rate', 'events_hourly'}, 8),
         'finance': ({'daily_revenue', 'daily_margin'}, 5),
     }
