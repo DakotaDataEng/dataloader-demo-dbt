@@ -4,7 +4,7 @@ Twelve small dbt projects that run in DataLoader's demo environment. Four model 
 
 | Project | Folder | Reads | Builds | Runs |
 |---|---|---|---|---|
-| Sales | `sales/` | customers, products, orders, order lines | daily sales, weekly sales, order sales, region sales, customer lifetime value, customer segments (a view), recent orders and order events (incremental models) | when its loads finish (asset automation) |
+| Sales | `sales/` | customers, products, orders, order lines | daily sales, order sales, region sales, customer lifetime value, customer segments (a view), recent orders and order events (incremental models) | when its loads finish (asset automation) |
 | Operations | `operations/` | inventory, shipments, web events, sandbox orders, customers, order events and sensor readings | stock levels, late shipment rate, events per hour, sandbox daily orders, sandbox customer order totals, sandbox daily order events and sandbox sensor readings by device, day and quality | hourly |
 | Finance | `finance/` | payments, plus the Sales models | daily revenue, daily margin | nightly, with a weekly full rebuild |
 | Oil and gas | seven projects, see [Oil and gas model families](#oil-and-gas-model-families) | field capture, production accounting, land, accounting and reserves tables | volumes, LOS, capital, financial, revenue, land and reserves marts | nightly |
@@ -34,7 +34,7 @@ Lakehouse runs on DataLoader's bundled dbt (dbt-oss 2.0.5 with DuckDB), so it ne
 
 - `sales/tests/verify_parse.py` parses Sales, Operations and Finance with both targets (six pairs) using the runtime above and checks each manifest has the shape DataLoader reads. Run it with this repository mounted read only at `/demo`.
 - `oilgas/tests/verify_oilgas.py` parses the seven oil and gas projects with both targets. It checks that every model and column is described, that no test was silently disabled, and that every source one project reads from another matches a model that project builds (12 edges). With `--build --pg-port N` it also builds and tests every project with both targets against a disposable Postgres container loaded by `oilgas/tests/load_fixtures.py`. See [Running the oil and gas checks](#running-the-oil-and-gas-checks).
-- `sales/tests/verify_sql.cjs <container>` runs every model in both schemas against a disposable Postgres container you own and checks 50 results (costs, statuses, dates across daylight saving, warning boundaries). It needs Node and Docker.
+- `sales/tests/verify_sql.cjs <container>` runs every model in both schemas against a disposable Postgres container you own and checks 48 results (costs, statuses, dates across daylight saving, warning boundaries). It needs Node and Docker.
 
 Each project's `tests/` folder also holds the dbt data tests that run with every build.
 

@@ -84,20 +84,6 @@ models:
         description: Order total as charged to the customer.
       - name: updated_at
         description: When the order row last changed in the source system.
-  - name: weekly_sales
-    description: Sales for each week, Monday to Sunday, from the daily totals.
-    columns:
-      - name: sales_week
-        description: Monday that starts the week.
-        data_tests: [not_null, unique]
-      - name: order_count
-        description: Orders placed that week.
-      - name: gross_revenue
-        description: Total order revenue for the week.
-      - name: gross_margin
-        description: Merchandise revenue minus merchandise cost for the week.
-      - name: units_sold
-        description: Units sold that week.
   - name: region_sales
     description: Sales for each province and channel.
     columns:

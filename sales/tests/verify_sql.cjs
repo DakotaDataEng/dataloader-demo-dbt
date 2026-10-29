@@ -55,7 +55,7 @@ for (const environment of ['test', 'prod']) {
       (2,'2026-10-09T02:00:00Z',100,'refunded'),(1,'2026-10-09T02:00:00Z',15,'pending');`);
   const models = {
     sales: ['order_sales', 'daily_sales', 'customer_lifetime_value', 'recent_orders',
-      'weekly_sales', 'region_sales', 'customer_segments', 'order_events'],
+      'region_sales', 'customer_segments', 'order_events'],
     operations: ['stock_levels', 'late_shipment_rate', 'events_hourly'],
     finance: ['daily_revenue', 'daily_margin'],
   };
@@ -68,7 +68,6 @@ for (const environment of ['test', 'prod']) {
   check(`select sales_date || '|' || gross_revenue || '|' || merchandise_cost || '|' || gross_margin from ${sales}.daily_sales;`, '2026-10-07|20.00|6.00|14.00');
   check(`select lifetime_revenue from ${sales}.customer_lifetime_value where customer_id=2;`, '0');
   check(`select count(*) from ${sales}.recent_orders;`, '2');
-  check(`select sales_week || '|' || order_count || '|' || units_sold from ${sales}.weekly_sales;`, '2026-10-05|1|2');
   check(`select region || '|' || channel || '|' || order_count || '|' || units_sold || '|' || round(average_categories, 2) from ${sales}.region_sales;`, 'West|web|1|2|1.00');
   check(`select string_agg(customer_id || ':' || segment, ',' order by customer_id) from ${sales}.customer_segments;`, '1:low,2:low');
   check(`select count(*) from ${sales}.order_events;`, '2');
@@ -94,6 +93,6 @@ for (const environment of ['test', 'prod']) {
   sql(`truncate ${operations}.late_shipment_rate;`);
   check(warning('2026-10-07T20:07:00Z'), '1');
   check(warning('2026-10-07T20:07:00Z', false), '0');
-  console.log(`PASS ${environment}: 13 model SQL statements and 25 result checks`);
+  console.log(`PASS ${environment}: 12 model SQL statements and 24 result checks`);
 }
 console.log(`PASS ${checks} SQL result checks total`);
