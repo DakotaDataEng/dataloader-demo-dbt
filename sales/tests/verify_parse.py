@@ -19,10 +19,12 @@ def main():
     dbt_environment = dict(os.environ)
     dbt_environment.pop('DBT_ALLOW_EXPERIMENTAL_ADAPTERS', None)
     expected = {
-        'sales': ({'order_sales', 'daily_sales', 'customer_lifetime_value', 'recent_orders'}, 10),
+        'sales': ({'order_sales', 'daily_sales', 'customer_lifetime_value', 'recent_orders',
+                   'weekly_sales', 'region_sales', 'customer_segments', 'order_events'}, 17),
         'operations': ({'stock_levels', 'late_shipment_rate', 'events_hourly'}, 8),
         'finance': ({'daily_revenue', 'daily_margin'}, 5),
     }
+    materializations = {'recent_orders': 'incremental', 'order_events': 'incremental', 'customer_segments': 'view'}
     manifests = {}
     with tempfile.TemporaryDirectory(prefix='demo-dbt-') as temporary:
         work = Path(temporary)
@@ -57,7 +59,7 @@ def main():
                     if node['resource_type'] == 'model':
                         assert node['schema'] == 'demo_' + project + '_' + environment
                         assert node['database'] == 'demo_warehouse'
-                        assert node['config']['materialized'] == ('incremental' if node['name'] == 'recent_orders' else 'table')
+                        assert node['config']['materialized'] == materializations.get(node['name'], 'table')
                 for source in manifest['sources'].values():
                     assert source['database'] == 'demo_warehouse'
                     schema = 'demo_sales_' if source['source_name'] == 'sales' else 'demo_raw_'

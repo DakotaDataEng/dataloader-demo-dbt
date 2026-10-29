@@ -1,4 +1,4 @@
-{{ config(materialized='incremental', unique_key='order_id') }}
+{{ config(materialized='incremental', unique_key='order_id', on_schema_change='append_new_columns') }}
 -- Orders from the 30 days up to the newest order. Each run adds new orders and updates the ones that changed since the last run.
 select
     order_id,
