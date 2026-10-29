@@ -13,14 +13,16 @@ models:
         description: Business date of the order in Edmonton time.
       - name: channel
         description: Where the order was placed, web or store.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['web']
       - name: region
         description: Province of the customer who placed the order.
       - name: order_revenue
         description: Order total as charged to the customer.
       - name: merchandise_revenue
         description: Sum of the order line amounts.
-      - name: merchandise_cost
-        description: What the items on the order cost the retailer.
       - name: units_sold
         description: Total units across the order lines.
       - name: category_count
