@@ -55,7 +55,7 @@ for (const environment of ['test', 'prod']) {
       (2,'2026-10-09T02:00:00Z',100,'refunded'),(1,'2026-10-09T02:00:00Z',15,'pending');`);
   const models = {
     sales: ['order_sales', 'daily_sales', 'customer_lifetime_value', 'recent_orders',
-      'weekly_sales', 'region_sales', 'customer_segments', 'order_events'],
+      'weekly_sales', 'region_sales', 'customer_segments', 'order_events', 'sales_by_channel'],
     operations: ['stock_levels', 'late_shipment_rate', 'events_hourly'],
     finance: ['daily_revenue', 'daily_margin'],
   };
@@ -72,6 +72,8 @@ for (const environment of ['test', 'prod']) {
   check(`select region || '|' || channel || '|' || order_count || '|' || units_sold || '|' || round(average_categories, 2) from ${sales}.region_sales;`, 'West|web|1|2|1.00');
   check(`select string_agg(customer_id || ':' || segment, ',' order by customer_id) from ${sales}.customer_segments;`, '1:low,2:low');
   check(`select count(*) from ${sales}.order_events;`, '2');
+  check(`select string_agg(distinct channel, ',') from ${sales}.order_events;`, 'web');
+  check(`select channel || '|' || order_count || '|' || gross_revenue || '|' || unit_count from ${sales}.sales_by_channel;`, 'web|1|20.00|2');
   check(`select needs_reorder from ${operations}.stock_levels;`, 't');
   check(`select shipment_count || '|' || late_count from ${operations}.late_shipment_rate;`, '3|2');
   check(`select count(*) from ${operations}.events_hourly;`, '2');
@@ -94,6 +96,6 @@ for (const environment of ['test', 'prod']) {
   sql(`truncate ${operations}.late_shipment_rate;`);
   check(warning('2026-10-07T20:07:00Z'), '1');
   check(warning('2026-10-07T20:07:00Z', false), '0');
-  console.log(`PASS ${environment}: 13 model SQL statements and 25 result checks`);
+  console.log(`PASS ${environment}: 14 model SQL statements and 27 result checks`);
 }
 console.log(`PASS ${checks} SQL result checks total`);
