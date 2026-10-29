@@ -4,7 +4,7 @@ with line_totals as (
         l.order_id,
         sum(l.line_amount) as merchandise_revenue,
         sum(l.quantity * l.unit_cost) as merchandise_cost,
-        sum(l.quantity) as units_sold,
+        sum(l.quantity) as unit_count,
         count(distinct p.category) as category_count
     from {{ source('demo_raw', 'order_lines') }} l
     join {{ source('demo_raw', 'products') }} p on p.product_id = l.product_id
@@ -19,7 +19,7 @@ select
     o.total_amount as order_revenue,
     coalesce(l.merchandise_revenue, 0) as merchandise_revenue,
     coalesce(l.merchandise_cost, 0) as merchandise_cost,
-    coalesce(l.units_sold, 0) as units_sold,
+    coalesce(l.unit_count, 0) as unit_count,
     coalesce(l.category_count, 0) as category_count
 from {{ source('demo_raw', 'orders') }} o
 join {{ source('demo_raw', 'customers') }} c on c.customer_id = o.customer_id

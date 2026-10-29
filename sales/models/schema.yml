@@ -21,7 +21,7 @@ models:
         description: Sum of the order line amounts.
       - name: merchandise_cost
         description: What the items on the order cost the retailer.
-      - name: units_sold
+      - name: unit_count
         description: Total units across the order lines.
       - name: category_count
         description: Number of product categories on the order.
@@ -139,7 +139,21 @@ models:
         description: The customer who placed the order.
       - name: status
         description: Where the order stands, processing, completed or cancelled.
+      - name: channel
+        description: Where the order was placed.
       - name: total_amount
         description: Order total as charged to the customer.
       - name: updated_at
         description: When the order row last changed in the source system.
+  - name: sales_by_channel
+    description: Sales for each channel.
+    columns:
+      - name: channel
+        description: Where the orders were placed.
+        data_tests: [not_null, unique]
+      - name: order_count
+        description: Orders placed through the channel, not counting cancelled ones.
+      - name: gross_revenue
+        description: Order revenue through the channel.
+      - name: unit_count
+        description: Units sold through the channel.
