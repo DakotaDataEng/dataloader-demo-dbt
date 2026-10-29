@@ -13,10 +13,6 @@ models:
         description: Business date of the order in Edmonton time.
       - name: channel
         description: Where the order was placed, web or store.
-        data_tests:
-          - accepted_values:
-              arguments:
-                values: ['web']
       - name: region
         description: Province of the customer who placed the order.
       - name: order_revenue
@@ -107,6 +103,10 @@ models:
         data_tests: [not_null]
       - name: channel
         description: Where the orders were placed, web or store.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['web']
       - name: order_count
         description: Orders placed.
       - name: gross_revenue
