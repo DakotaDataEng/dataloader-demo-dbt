@@ -1,0 +1,9 @@
+version: 2
+sources:
+  - name: python_jobs
+    description: Files and tables written by Python jobs. The job "Well test summary (Python)" writes the well test summary.
+    database: '{{ target.database }}'
+    schema: 'demo_python_jobs_{{ target.name }}'
+    tables:
+      - name: well_test_summary
+        description: Well test results summarised by the Python job, one row per well.

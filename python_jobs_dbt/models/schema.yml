@@ -1,0 +1,9 @@
+version: 2
+models:
+  - name: well_test_report
+    description: Marks when the well test summary last rebuilt. It runs after the Python job "Well test summary (Python)" updates its output.
+    columns:
+      - name: refreshed_at
+        description: When the model last rebuilt.
+      - name: note
+        description: What triggered the rebuild.
