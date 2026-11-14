@@ -1,4 +1,5 @@
 -- Latest row per shipment_id: the incremental load can land a key more than once.
+-- depends_on: {{ ref('silver_orders') }}
 select
     shipment_id,
     order_id,
