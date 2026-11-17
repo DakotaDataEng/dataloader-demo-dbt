@@ -6,6 +6,7 @@ select
     sum(merchandise_revenue) as merchandise_revenue,
     sum(merchandise_cost) as merchandise_cost,
     sum(merchandise_revenue - merchandise_cost) as gross_margin,
-    sum(units_sold) as units_sold
+    sum(unit_count) as units_sold,
+    round(sum(order_revenue) / count(*), 2) as average_order_value
 from {{ ref('order_sales') }}
 group by sales_date

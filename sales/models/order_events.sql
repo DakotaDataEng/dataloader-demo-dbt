@@ -4,6 +4,7 @@ select
     order_id,
     customer_id,
     status,
+    channel,
     total_amount,
     updated_at
 from {{ source('demo_raw', 'orders') }}
