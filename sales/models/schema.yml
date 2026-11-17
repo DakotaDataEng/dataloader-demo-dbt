@@ -19,8 +19,6 @@ models:
         description: Order total as charged to the customer.
       - name: merchandise_revenue
         description: Sum of the order line amounts.
-      - name: merchandise_cost
-        description: What the items on the order cost the retailer.
       - name: units_sold
         description: Total units across the order lines.
       - name: category_count
@@ -105,6 +103,10 @@ models:
         data_tests: [not_null]
       - name: channel
         description: Where the orders were placed, web or store.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['web']
       - name: order_count
         description: Orders placed.
       - name: gross_revenue
